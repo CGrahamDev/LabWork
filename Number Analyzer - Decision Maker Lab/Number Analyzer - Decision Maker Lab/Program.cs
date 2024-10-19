@@ -16,7 +16,7 @@ Additional Requirements:
 -2 Points: if there are any syntax errors or if the program does not run (for example, in a Main method). 
 
 Extra Challenges (2 Points Maximum):
-1 Point: Set up the program to continue running with a prompt at the end to see if they want to stop. (hint: Loops)
+>1 Point: Set up the program to continue running with a prompt at the end to see if they want to stop. (hint: Loops)
 >1 Point: Ask for user information (ex. name) at the beginning of the application, and use it to refer to the user throughout the application.
 >1 Point: Add validation to guarantee that a user enters a positive integer between 1 and 100.
 
