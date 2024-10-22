@@ -37,7 +37,7 @@ while (gameEnd != true)
     int userInt = int.Parse(Console.ReadLine());
 
     //Validation to make sure user doesn't input an incorrect input 
-    if (userInt < 1 || userInt > 100)
+    if (userInt < 1 || userInt > 100) //||perhaps useless because the proram throws an exception || userInt.GetType() != typeof(int) )
     {
         gameEnd = true;
         Console.WriteLine($"Invalid Number, {userName}; thank you for using this program");
@@ -45,7 +45,7 @@ while (gameEnd != true)
     }
     
     //the number analyzer
-    if (userInt % 2 != 0 && userInt < 60)
+    if (userInt % 2 != 0 && userInt < 60 )
     {
         Console.WriteLine("Odd and less than 60");
     }
@@ -67,15 +67,16 @@ while (gameEnd != true)
     }
 
 
-    Console.WriteLine($"Would you like to run the program again {userName}? y/n");
+    Console.WriteLine($"Would you like to stop the program {userName}? y/n");
     string userRerunRequest = Console.ReadLine();
-    if (userRerunRequest.ToLower() == "n")
+    if (userRerunRequest.ToLower() == "y")
     {
         Console.WriteLine("Thank you for using the number analyzer!");
         gameEnd = true;   
-    } else if (userRerunRequest.ToLower() == "y")
+    } else if (userRerunRequest.ToLower() == "n")
     {
         Console.WriteLine("Okay!");
+        Console.WriteLine( " " );
     }
     else
     {
