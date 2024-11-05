@@ -44,27 +44,7 @@ while (gameEnd != true)
         break;
     }
     
-    //the number analyzer
-    if (userInt % 2 != 0 && userInt < 60 )
-    {
-        Console.WriteLine("Odd and less than 60");
-    }
-    else if (userInt % 2 == 0 && userInt >= 2 && userInt <= 24)
-    {
-        Console.WriteLine("Even and less than 25");
-    }
-    else if (userInt % 2 == 0 && userInt >= 26 & userInt <= 60)
-    {
-        Console.WriteLine("Even and between 26 and 60 inclusive.");
-    }
-    else if (userInt % 2 == 0 && userInt > 60)
-    {
-        Console.WriteLine("Even and greater than 60.");
-    }
-    else if (userInt % 2 != 0 && userInt > 60)
-    {
-        Console.WriteLine("Odd and greater than 60.");
-    }
+    AnalyzeNumber( userInt );
 
 
     Console.WriteLine($"Would you like to stop the program {userName}? y/n");
@@ -86,3 +66,40 @@ while (gameEnd != true)
 
 
 }
+
+
+
+
+
+
+static string AnalyzeNumber(int userInt)
+{
+    //the number analyzer
+    if (userInt % 2 != 0 && userInt < 60)
+    {
+        Console.WriteLine("Odd and less than 60");
+        return "Odd and less than 60";
+    }
+    else if (userInt % 2 == 0 && userInt >= 2 && userInt <= 24)
+    {
+        Console.WriteLine("Even and less than 25");
+        return "Even and less than 25";
+    }
+    else if (userInt % 2 == 0 && userInt >= 26 & userInt <= 60)
+    {
+        Console.WriteLine("Even and between 26 and 60 inclusive.");
+        return "Even and between 26 and 60 inclusive.";
+    }
+    else if (userInt % 2 == 0 && userInt > 60)
+    {
+        Console.WriteLine("Even and greater than 60.");
+        return "Even and greater than 60.";
+    }
+    else if (userInt % 2 != 0 && userInt > 60)
+    {
+    Console.WriteLine("Odd and greater than 60.");
+        return "Odd and greater than 60.";
+    }
+    return "Invalid input";
+
+}   
