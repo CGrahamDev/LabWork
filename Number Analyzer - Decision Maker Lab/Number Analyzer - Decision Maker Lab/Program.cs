@@ -21,7 +21,7 @@ Extra Challenges (2 Points Maximum):
 >1 Point: Add validation to guarantee that a user enters a positive integer between 1 and 100.
 
 */
-using System.Runtime.CompilerServices;
+
 
 Console.WriteLine("What is your name?");
 string userName = Console.ReadLine();
@@ -30,7 +30,7 @@ bool gameEnd = false;
 
 
 
-
+//Redo this loop later to include retry logic.
 while (gameEnd != true)
 {
     Console.WriteLine($"Hi {userName}, enter a number between 1 and 100 inclusive");
