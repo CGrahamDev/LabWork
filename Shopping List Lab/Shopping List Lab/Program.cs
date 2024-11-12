@@ -46,10 +46,27 @@ foreach(KeyValuePair<string,double> itemPair in itemsForSale )
 }
     Console.WriteLine("Enter the name of any item you would like to buy.");
 string userItemInput = Console.ReadLine();
-Dictionary<string, double> shoppingList = new Dictionary<string, double> {};
-bool doesItemExist = itemsForSale.ContainsKey(userItemInput);
 
-if ( doesItemExist ==  true)
+//Shoppin list where added items will go.
+Dictionary<string, double> shoppingList = new Dictionary<string, double> {};
+
+
+
+string itemNameKey = "";
+bool doesItemExist = itemsForSale.ContainsKey(userItemInput);
+if (doesItemExist == true)
 {
-    shoppingList.Add();
+    itemNameKey = userItemInput;
+    Console.WriteLine($"You have selected {itemNameKey} ");
+} else
+{
+    Console.Clear();
+    Console.WriteLine("The item you entered doesn't exist please enter one of these items.");
+    foreach(KeyValuePair<string, double> itemPair in itemsForSale)
+    {
+        Console.WriteLine($"{itemPair.Key} at {itemPair.Value:c}");
+    }
 }
+
+
+//classes cannot be private
