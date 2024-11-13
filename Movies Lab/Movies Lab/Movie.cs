@@ -12,6 +12,8 @@ namespace Movies_Lab
     {
         public string title;
         public string category;
+
+
         public Movie(string title, string category)
         {
             this.title = title;
@@ -19,26 +21,13 @@ namespace Movies_Lab
 
 
         }
-        ///Will take a List of movies and find each unique category and will return a List<string> with each unique category
-        public List<string> GetListCategories(List<Movie> listOfMovies)
+
+        public string GetCategory(Movie movieObject)
         {
-            List<string> listOfCategories = new List<string>();
-            foreach (Movie movie in listOfMovies)
-            {
-                if (listOfCategories.Contains(movie.category) == false)
-                {
-                    listOfCategories.Add(movie.category);
-                }   
-            }
-            
-            if (listOfCategories.Count == 0)
-            {
-                Console.WriteLine("Movies list is not populated or not found. No categories could be listed.");
-                List<string> emptyString = new List<string>() {""};
-                return emptyString;
-            }
-            return listOfCategories;
+            return this.category;
         }
+        
+        
     }
 }
 
