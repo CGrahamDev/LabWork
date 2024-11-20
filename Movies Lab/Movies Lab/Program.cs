@@ -36,15 +36,18 @@ using Movies_Lab;
 List<Movie> listOfMovies = new List<Movie>()
 {
     new Movie("Terrorizer", "Horror"),
-    new Movie("The Notebook","Tragedy"),
+    new Movie("The Notebook","Drama"),
     new Movie("The Lego Movie", "Comedy"),
     new Movie("Deadpool and Wolverine", "Action"),
-    new Movie("Look Back", "Tragedy"),
+    new Movie("Evangelion", "Scifi"),
     new Movie("JJK0", "Action"),
     new Movie("Barbie Movie", "Comedy"),
     new Movie("Cars", "Racing"),
-    new Movie("Inside Out 2", "Coming of age"),
+    new Movie("Inside Out 2", "Animated"),
     new Movie("Zoolander", "Comedy"),
+    new Movie("Wall-E", "Animated"),
+    new Movie("Star Trek","Scifi"),
+    new Movie("The Thing", "Horror"),
 
 };
 bool userRequery = true;
@@ -74,6 +77,7 @@ do
         validMovies = listOfMovies.Where(x => x.category.ToLower() == userInput.ToLower().Trim()).ToList();
     }
 
+    Console.WriteLine($"Here are the following films in the {validMovies[0].category} category:");
     //Displays each valid title and category
     foreach (Movie movie in validMovies)
     {
@@ -122,7 +126,7 @@ do
 Console.WriteLine("Press any key to exit");
 Console.ReadKey();
 Environment.Exit(0);
-///Will take a List of movies and find each unique category and will return a List<string> with each unique category
+//Will take a List of movies and find each unique category and will return a List<string> with each unique category
 static List<string> GetListCategories(List<Movie> listOfMovies)
 {
     List<string> listOfCategories = new List<string>();
