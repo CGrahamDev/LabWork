@@ -12,8 +12,6 @@ namespace Movies_Lab
     {
         public string title;
         public string category;
-
-
         public Movie(string title, string category)
         {
             this.title = title;
@@ -21,7 +19,6 @@ namespace Movies_Lab
 
 
         }
-
         public string GetCategory(Movie movieObject)
         {
             return this.category;
