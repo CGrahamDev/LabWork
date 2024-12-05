@@ -12,7 +12,7 @@ namespace Roshambo_Lab
         public override Roshambo GenerateRoshambo()
         {
             Random random = new Random();
-            int randomNum = random.Next(3);
+            int randomNum = random.Next(0,3);
             return (Roshambo)randomNum;
 
         }

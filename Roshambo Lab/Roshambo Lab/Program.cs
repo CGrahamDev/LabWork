@@ -119,7 +119,7 @@ Environment.Exit(0);
 
 
 
-//TODO Display wins and losses and ties
+//TODO Display wins and losses ~~and~~ties~~
 
 
 
@@ -131,38 +131,45 @@ Environment.Exit(0);
 bool PlayRoshamboGame(HumanPlayer playerOne, Player playerTwo)
 {
     bool victory = false;
-    Console.WriteLine("Rock, Paper, Scissors!");
-    Roshambo playerOneValue = playerOne.GenerateRoshambo();
-    Roshambo playerTwoValue = playerTwo.GenerateRoshambo();
-    if ((playerOneValue == Roshambo.Rock && playerTwoValue == Roshambo.Scissors) ||
-        (playerOneValue == Roshambo.Scissors && playerTwoValue == Roshambo.Paper) ||
-        (playerOneValue == Roshambo.Paper && playerTwoValue == Roshambo.Rock))
+    Console.WriteLine(
+        
+        
+        
+        
+        );
+    while (true)
     {
-        Console.WriteLine($"You rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
-            $"Your opponent rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
-            $"You win!");
-        victory = true;
-        return victory;
+        Console.WriteLine("Rock, Paper, Scissors!");
+        Roshambo playerOneValue = playerOne.GenerateRoshambo();
+        Roshambo playerTwoValue = playerTwo.GenerateRoshambo();
+        if ((playerOneValue == Roshambo.Rock && playerTwoValue == Roshambo.Scissors) ||
+            (playerOneValue == Roshambo.Scissors && playerTwoValue == Roshambo.Paper) ||
+            (playerOneValue == Roshambo.Paper && playerTwoValue == Roshambo.Rock))
+        {
+            Console.WriteLine($"You rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
+                $"Your opponent rolled {Enum.GetName(typeof(Roshambo), playerTwoValue)}\n" +
+                $"You win!");
+            victory = true;
+            return victory;
+        }
+        else if ((playerOneValue == Roshambo.Rock && playerTwoValue == Roshambo.Rock) ||
+            (playerOneValue == Roshambo.Scissors && playerTwoValue == Roshambo.Scissors) ||
+            (playerOneValue == Roshambo.Paper && playerTwoValue == Roshambo.Paper))
+        {
+            Console.WriteLine($"you both rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
+                $"You tied!");
+            continue;
+        }
+        else if ((playerTwoValue == Roshambo.Rock && playerOneValue == Roshambo.Scissors) ||
+            (playerTwoValue == Roshambo.Scissors && playerOneValue == Roshambo.Paper) ||
+            (playerTwoValue == Roshambo.Paper && playerOneValue == Roshambo.Rock))
+        {
+            Console.WriteLine($"You rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
+                $"Your opponent rolled {Enum.GetName(typeof(Roshambo), playerTwoValue)}\n" +
+                $"You lost!");
+            return victory;
+        }
     }
-    else if ((playerOneValue == Roshambo.Rock && playerTwoValue == Roshambo.Rock) ||
-        (playerOneValue == Roshambo.Scissors && playerTwoValue == Roshambo.Scissors) ||
-        (playerOneValue == Roshambo.Paper && playerTwoValue == Roshambo.Paper))
-    {
-        Console.WriteLine($"you both rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
-            $"You tied!");
-       //TODO: make it so that this result causes an auto restart until a win or loss is achieved.
-    }
-    else if((playerTwoValue == Roshambo.Rock && playerOneValue == Roshambo.Scissors) ||
-        (playerTwoValue == Roshambo.Scissors && playerOneValue == Roshambo.Paper) ||
-        (playerTwoValue == Roshambo.Paper && playerOneValue == Roshambo.Rock))
-    {
-        Console.WriteLine($"You rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
-            $"Your opponent rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
-            $"You lost!");
-        return victory;
-    }
-
-    return false;
 
 }
 
