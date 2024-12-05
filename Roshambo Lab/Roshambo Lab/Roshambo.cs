@@ -11,7 +11,6 @@ namespace Roshambo_Lab
         Rock ,
         Paper ,
         Scissors,
-
     }
     
 }

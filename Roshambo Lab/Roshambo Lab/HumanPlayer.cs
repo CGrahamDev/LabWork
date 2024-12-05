@@ -39,7 +39,7 @@ namespace Roshambo_Lab
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Oops!Enter a number 0-2 correlating to the throw you wanna call.");
+                    Console.WriteLine("Oops! Enter a number 0-2 correlating to the throw you wanna call.");
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     Console.Clear();
@@ -48,7 +48,7 @@ namespace Roshambo_Lab
                 // TODO: ADD EXTRA LAYER OF VALIDATION SO THAT THE USER CAN DIRECTLY NOT HAVE TO CRASH THEIR APP FOR USING THE WRONG INPUT
                 if (!Enum.IsDefined(typeof(Roshambo), userValue))
                 {
-                    Console.WriteLine("Invalid input; not Rock, Paper, or Scissors.");
+                    Console.WriteLine($" Sorry {Name}! Invalid input; not Rock, Paper, or Scissors.");
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     Console.Clear();

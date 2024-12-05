@@ -24,9 +24,7 @@ Keep track of wins and losses, and display them at the end of each session.
 
  */
 using Roshambo_Lab;
-using System.ComponentModel;
-using System.Reflection.Metadata;
-using System.Reflection.Metadata.Ecma335;
+
 
 
 bool gameRetry = true;
@@ -96,6 +94,7 @@ do
             lossCount += 1;
         }
     }
+   
     Console.WriteLine("Would you like to play again?");
     string userAnswer = AnswerYOrN();
     switch (userAnswer)
@@ -106,6 +105,8 @@ do
             
         case "n":
             Console.Clear();
+            Console.WriteLine($"Finished with:\n" +
+                $"-- {winCount} wins | {lossCount} losses --");
             Console.WriteLine("Goodbye!");
             gameRetry = false;
             break;
@@ -152,17 +153,13 @@ bool PlayRoshamboGame(HumanPlayer playerOne, Player playerTwo)
             victory = true;
             return victory;
         }
-        else if ((playerOneValue == Roshambo.Rock && playerTwoValue == Roshambo.Rock) ||
-            (playerOneValue == Roshambo.Scissors && playerTwoValue == Roshambo.Scissors) ||
-            (playerOneValue == Roshambo.Paper && playerTwoValue == Roshambo.Paper))
+        else if (playerOneValue == playerTwoValue)
         {
             Console.WriteLine($"you both rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
                 $"You tied!");
             continue;
         }
-        else if ((playerTwoValue == Roshambo.Rock && playerOneValue == Roshambo.Scissors) ||
-            (playerTwoValue == Roshambo.Scissors && playerOneValue == Roshambo.Paper) ||
-            (playerTwoValue == Roshambo.Paper && playerOneValue == Roshambo.Rock))
+        else 
         {
             Console.WriteLine($"You rolled {Enum.GetName(typeof(Roshambo), playerOneValue)}\n" +
                 $"Your opponent rolled {Enum.GetName(typeof(Roshambo), playerTwoValue)}\n" +
