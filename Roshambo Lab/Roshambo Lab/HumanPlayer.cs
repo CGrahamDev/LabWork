@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -37,12 +38,15 @@ namespace Roshambo_Lab
                 catch (FormatException)
                 {
                     Console.WriteLine("Oops!Enter a number 0-2 correlating to the throw you wanna call.");
+                    continue;
                 }
                 //used to make sure that 
                 if (!Enum.IsDefined(typeof(Roshambo), userValue))
                 {
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("Invalid input; not Rock, Paper, or Scissors.");
+                    
                 }
+                break;
             } while (pass != true);
             return (Roshambo)userValue;
         }
