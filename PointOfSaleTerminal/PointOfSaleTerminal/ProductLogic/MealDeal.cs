@@ -6,24 +6,40 @@ using System.Threading.Tasks;
 
 namespace PointOfSaleTerminal.ProductLogic
 {
-    internal class MealDeal : Product
+    internal class MealDeal
     {
-        Product[] Meal {  get; set; }
-        decimal Price { get; set; }
-        public MealDeal()
+        Product[] Meal { get; set; }
+        public static Category MenuCategory = Category.MealDeal;
+        public decimal Price { get; private set; }
+
+
+        //Will learn what items are in 
+        public MealDeal(List<Product> meal)
         {
-            
-            CalculateDeal();
+            FormMeal(meal);
+            CalculateDealPrice();
         }
 
-        internal decimal CalculateDeal()
+        //takes in the list of items congregated for a meal and adds each item to the Meal
+        private void FormMeal(List<Product> meal)
+        {
+            Meal = new Product[meal.Count];
+            for (int i = 0; i < meal.Count; i++) 
+            {
+                Meal[i] = meal[i];
+            }
+        }
+
+
+        private void CalculateDealPrice()
         {
             decimal totalPrice = 0;
-            foreach (Product item in Meal) 
+            foreach (Product item in Meal)
             {
-                switch (item.Category)
+                switch (item.MenuCategory)
                 {
                     case Category.Entree:
+                    case Category.ValueItem:
                         item.Price *= 0.85m;
                         totalPrice += item.Price;
                         break;
@@ -39,9 +55,14 @@ namespace PointOfSaleTerminal.ProductLogic
                         item.Price *= 0.50m;
                         totalPrice += item.Price;
                         break;
+                    
                 }
             }
-            return totalPrice;
+            Price = totalPrice;
+        }
+        public override string ToString()
+        {
+            return "";
         }
     
     }
