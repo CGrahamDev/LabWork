@@ -18,8 +18,20 @@ Optional enhancements:
 -(Moderate) Store your list of products in a text file and then include an option to add to the product list, which then outputs to the product file.
 -(Buff) Do a push up every time you get an exception or error while running your code
 */
+using PointOfSaleTerminal.ProductLogic;
+
+List<Product> cart = new List<Product>(); 
+try
+{
+    StreamReader reader = new StreamReader("menu.txt");
+}
+catch (FileNotFoundException)
+{
+    StreamWriter writer = new StreamWriter("menu.txt");
+}
 
 
+//One of a few nav screens intended (Admin, Edit(edit menu items), Menu/Customer,)
 MenuNavigation();
 
 Console.ReadKey();
@@ -30,5 +42,18 @@ Console.ReadKey();
 
 void MenuNavigation()
 {
-
+    while (true)
+    {
+        
+        break;
+    }
 }
+
+void CheckOut()
+{
+    foreach (Product item in cart)
+    {
+        throw new NotImplementedException();
+    }
+}
+

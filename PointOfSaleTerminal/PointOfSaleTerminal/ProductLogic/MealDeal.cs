@@ -8,25 +8,25 @@ namespace PointOfSaleTerminal.ProductLogic
 {
     internal class MealDeal
     {
-        Product[] Meal { get; set; }
+        public Product[] Meal { get; set; }
         public static Category MenuCategory = Category.MealDeal;
         public decimal Price { get; private set; }
 
 
         //Will learn what items are in 
-        public MealDeal(List<Product> meal)
+        public MealDeal(params Product[] mealItems)
         {
-            FormMeal(meal);
+            FormMeal(mealItems);
             CalculateDealPrice();
         }
 
         //takes in the list of items congregated for a meal and adds each item to the Meal
-        private void FormMeal(List<Product> meal)
+        private void FormMeal(params Product[] mealItems)
         {
-            Meal = new Product[meal.Count];
-            for (int i = 0; i < meal.Count; i++) 
+            Meal = new Product[mealItems.Length];
+            for (int i = 0; i < mealItems.Length; i++) 
             {
-                Meal[i] = meal[i];
+                Meal[i] = mealItems[i];
             }
         }
 
