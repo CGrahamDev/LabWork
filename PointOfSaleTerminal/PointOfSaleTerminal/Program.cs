@@ -19,15 +19,18 @@ Optional enhancements:
 -(Buff) Do a push up every time you get an exception or error while running your code
 */
 using PointOfSaleTerminal.ProductLogic;
+using System.Runtime.CompilerServices;
 
 List<Product> cart = new List<Product>(); 
 try
 {
     StreamReader reader = new StreamReader("menu.txt");
+    reader.Close(); 
 }
 catch (FileNotFoundException)
 {
     StreamWriter writer = new StreamWriter("menu.txt");
+    writer.Close();
 }
 
 
@@ -39,15 +42,50 @@ Console.ReadKey();
 
 //Fast Food - Chelsea's Comically Collossal Chicken
 
-
+//will contain everything needed to navigate the menu
 void MenuNavigation()
 {
     while (true)
     {
-        
+        int menuOption = -1;
+        bool validMenuOption = false;
+        Console.WriteLine($"Enter the number for the menu option:");
+        if (int.TryParse(Console.ReadLine(), out menuOption)){
+            switch(menuOption)
+            {
+                case 1: // Adding items and combos to cart
+                    OrderFood();
+                    break;
+                case 2: //Cart clearing
+                    Console.WriteLine("Are you sure? This will empty your cart!");
+                    string userAnswer = AnswerYOrN();
+                    if (userAnswer=="y") {
+                        Product.ClearCart();
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    } 
+                case 3: // displaying cart 
+                    Product.DisplayFromCart();
+                    break;
+                case 4: //Checking out
+                    CheckOut();
+                    break;
+            }
+        }
         break;
     }
 }
+//will contain all of the necessary food options for odering
+void OrderFood()
+{
+
+}
+
+
+
 
 void CheckOut()
 {
@@ -57,3 +95,21 @@ void CheckOut()
     }
 }
 
+string AnswerYOrN()
+{
+    while (true)
+    {
+        Console.WriteLine("Answer \"y\" or \"n\"");
+        string answer = Console.ReadLine().ToLower();
+        switch (answer)
+        {
+            case "y":
+            case "n":
+                return answer;
+                break;
+            default:
+                Console.WriteLine("Invalid input: please enter \"y\" or \"n\"");
+                continue;
+        }
+    }
+}
