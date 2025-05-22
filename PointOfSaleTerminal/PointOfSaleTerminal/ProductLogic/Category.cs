@@ -8,11 +8,11 @@ namespace PointOfSaleTerminal.ProductLogic
 {
     internal enum Category
     {
-        MealDeal,
         Entree,
         SideDish,
         ValueItem,
         Beverage,
         Dessert,
+        MealDeal,
     }
 }
