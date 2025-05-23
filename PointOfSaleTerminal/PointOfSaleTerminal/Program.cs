@@ -26,7 +26,7 @@ using PointOfSaleTerminal.ProductLogic;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-StoreFront chelseasChickenStore = new StoreFront();
+StoreFront chelseasChickenStore = new StoreFront("Chelsea's Comically Collosal Chicken");
 
 string[] menuOptions = new string[4]
 {
@@ -52,13 +52,16 @@ catch (FileNotFoundException)
 }
 
 //test values
-//Product classicChickenSandwhich = new Product("Classic Chicken Sandwhich", 1, "Our classic collosal chicken sandwhich with tomatoes, onions, and lettuce", 3.99m );
+Product classicChickenSandwhich = new Product("Classic Chicken Sandwhich", 0, "Our classic collosal chicken sandwhich with tomatoes, onions, and lettuce", 3.99m );
+Product classicChickenFingers = new Product("Classic Chicken Fingers", 1, "Our classically crafted chicken fingers used with our famous decades old recipe", 0.99m);
 //MealDeal doubleChickenMeal = new MealDeal("Chicken Fry Meal", classicChickenSandwhich, classicChickenSandwhich );
 
-//chelseasChickenStore.RemoveFromMenu(classicChickenSandwhich);
+chelseasChickenStore.AddToMenu(classicChickenSandwhich);
+chelseasChickenStore.AddToMenu(classicChickenFingers);
+chelseasChickenStore.DisplayMenu();
 
 //One of a few nav screens intended (Admin, Edit(edit menu items), Menu/Customer,)
-ConsoleMenuNavigation();
+//ConsoleMenuNavigation();
 
 /* test method
 Console.WriteLine($"{doubleChickenMeal.ToString()}");
@@ -132,14 +135,14 @@ void ConsoleMenuNavigation()
         {
             Console.WriteLine($"{i+1}: {menuOptions[i]}");
         }
-        if (int.TryParse(Console.ReadLine(), out int menuOption))
+        if (int.TryParse(Console.ReadLine(), out int selectedMenuOption))
         {
-            try { Console.WriteLine($"You have selected {menuOptions[menuOption]}"); }
+            try { Console.WriteLine($"You have selected {menuOptions[selectedMenuOption]}"); }
             catch (IndexOutOfRangeException)
             {
-                if (menuOption == adminCode)
+                if (selectedMenuOption == adminCode)
                 {
-                    menuOption = adminCode;
+                    selectedMenuOption = adminCode;
                 }
                 else
                 {
@@ -147,7 +150,7 @@ void ConsoleMenuNavigation()
                     continue;
                 }
             }
-            switch (menuOption)
+            switch (selectedMenuOption)
             {
                 case 1: // Adding items and combos to cart
                     chelseasChickenStore.OrderFood();
@@ -171,7 +174,7 @@ void ConsoleMenuNavigation()
                     chelseasChickenStore.CheckOut();
                     break;
                 case adminCode:
-                    throw new NotImplementedException();
+                    AdminMenu();
                     break;
             }
 

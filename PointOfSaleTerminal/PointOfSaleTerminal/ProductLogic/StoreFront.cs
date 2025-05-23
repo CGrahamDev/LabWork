@@ -11,15 +11,18 @@ namespace PointOfSaleTerminal.ProductLogic
     {
         public List<Product> Cart { get; private set; }
         public List<Product> Menu {  get; private set; }
+        public string StoreName { get; set; }
+
 
 
 
         //constructor 
-        public StoreFront()
+        public StoreFront(string storeName)
         {
+
             Cart = new List<Product>();
             Menu = new List<Product>();
-
+            StoreName = storeName;
         }
 
         //REWRITE ALL METHODS SO THAT THEY MAKE SENSE NOW THAT THIS CLASS IS NO LONGER STATIC
@@ -78,6 +81,11 @@ namespace PointOfSaleTerminal.ProductLogic
         //figure out how to make menu hold MealDeal items too
         public void DisplayMenu()
         {
+            const int menuMaxLength = 128;
+            const int menuDeadCenterLength = menuMaxLength / 2;
+            const int menuQuarterCenterLength = menuDeadCenterLength / 2;
+            //used to determine which of the two category lists at is time is holding more items
+            int higherCount = 0;
             List<Product> entrees = new List<Product>();
             List<Product> sides = new List<Product>();
             List<Product> beverages = new List<Product>();
@@ -108,10 +116,34 @@ namespace PointOfSaleTerminal.ProductLogic
                     //TBC
                 }
             }
-             
+            //look how to express repeated chars using Console witchery
+            Console.WriteLine(new string('-', menuMaxLength));
+            //test value with magic value 
+            //TODO Change length values to include const values and math that would take into account of variable lengths for each thing. e.g: change "4C Menu" to store name.
+            Console.Write(new string(' ', 60) + " 4C Menu" + new string(' ', 60)+"\n\r");
 
-
+            Console.Write(new string('-', 28) + "Entrees" + new string('-',28));
+            Console.WriteLine(new string('-', 29) + "Sides" + new string('-',31));
+            if(entrees.Count > sides.Count)
+            {
+                higherCount = entrees.Count;
+            }
+            else
+            {
+                higherCount = sides.Count;      
+            }
+            for (int i = 0; i < higherCount; i++)
+            {
+                //NOTE: Add logic to make sure that in the case of a categorical type not having the same number of indexing as the higher count, that the loop will end as to avoid throwing an ArgumentOutRangeException.
+                //Particularly adding a try-catch that will catch that IndexOutOfRangeExceptions and break the loop in the case of being caught.
+                int nameSpaceOffset = entrees[i].Name.Length/2;
+                Console.Write(new string(' ', (menuMaxLength/4 - nameSpaceOffset)) + $"{ entrees[i].Name}" + new string(' ', (menuMaxLength/4 - nameSpaceOffset)));
+                nameSpaceOffset = sides[i].Name.Length/2;
+                Console.WriteLine(new string(' ', menuMaxLength/4 - nameSpaceOffset) + $"{sides[i].Name}" + new string(' ', (menuMaxLength/4 - nameSpaceOffset)));
+                
+            }
         }
+        //DEVELOP A PRODUCT DETAILS METHOD
 
 
 
