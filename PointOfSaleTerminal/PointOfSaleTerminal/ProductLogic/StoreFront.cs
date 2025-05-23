@@ -12,16 +12,17 @@ namespace PointOfSaleTerminal.ProductLogic
         public List<Product> Cart { get; private set; }
         public List<Product> Menu {  get; private set; }
         public string StoreName { get; set; }
-
+        public List<MealDeal> Meals { get; set; }
 
 
 
         //constructor 
         public StoreFront(string storeName)
         {
-
+            Meals = new List<MealDeal>();
             Cart = new List<Product>();
             Menu = new List<Product>();
+            int menuItemNumber = 0;
             StoreName = storeName;
         }
 
@@ -81,6 +82,18 @@ namespace PointOfSaleTerminal.ProductLogic
         //figure out how to make menu hold MealDeal items too
         public void DisplayMenu()
         {
+            //Will be used to assign a number to each menu item
+            int menuItemValue = 1;
+            int nameSpaceOffset = -1;
+            string[] categoryNames = new string[]
+            {
+                $"{(Category)0}s",
+                $"{(Category)1}es",
+                $"{(Category)2}s",
+                $"{(Category)3}s",
+                $"{(Category)4}s",
+                $"{(Category)5}s",
+            };
             const int menuMaxLength = 128;
             const int menuDeadCenterLength = menuMaxLength / 2;
             const int menuQuarterCenterLength = menuDeadCenterLength / 2;
@@ -120,10 +133,12 @@ namespace PointOfSaleTerminal.ProductLogic
             Console.WriteLine(new string('-', menuMaxLength));
             //test value with magic value 
             //TODO Change length values to include const values and math that would take into account of variable lengths for each thing. e.g: change "4C Menu" to store name.
-            Console.Write(new string(' ', 60) + " 4C Menu" + new string(' ', 60)+"\n\r");
+            //Add logic to take into account the store name being odd vs even. As well as all of the other name dependent cw calls.
+            Console.Write(new string(' ', menuDeadCenterLength-StoreName.Length/2) + $"{StoreName}" + new string(' ', menuDeadCenterLength - StoreName.Length/2) +"\n\r");
 
-            Console.Write(new string('-', 28) + "Entrees" + new string('-',28));
-            Console.WriteLine(new string('-', 29) + "Sides" + new string('-',31));
+            Console.Write(new string('-', menuQuarterCenterLength - categoryNames[0].Length/2) + $"{categoryNames[0]}" + new string('-', menuQuarterCenterLength - categoryNames[0].Length / 2));
+            Console.WriteLine(new string('-', menuQuarterCenterLength - categoryNames[1].Length / 2) + $"{categoryNames[1]}" + new string('-', menuQuarterCenterLength - categoryNames[1].Length / 2));
+            Console.WriteLine(new string(' ', menuMaxLength));
             if(entrees.Count > sides.Count)
             {
                 higherCount = entrees.Count;
@@ -132,17 +147,75 @@ namespace PointOfSaleTerminal.ProductLogic
             {
                 higherCount = sides.Count;      
             }
-            for (int i = 0; i < higherCount; i++)
+            //Making sure that both entrees and sides have more than 0 items before
+            if (higherCount > 0 && entrees.Count > 0 && sides.Count > 0)
             {
-                //NOTE: Add logic to make sure that in the case of a categorical type not having the same number of indexing as the higher count, that the loop will end as to avoid throwing an ArgumentOutRangeException.
-                //Particularly adding a try-catch that will catch that IndexOutOfRangeExceptions and break the loop in the case of being caught.
-                int nameSpaceOffset = entrees[i].Name.Length/2;
-                Console.Write(new string(' ', (menuMaxLength/4 - nameSpaceOffset)) + $"{ entrees[i].Name}" + new string(' ', (menuMaxLength/4 - nameSpaceOffset)));
-                nameSpaceOffset = sides[i].Name.Length/2;
-                Console.WriteLine(new string(' ', menuMaxLength/4 - nameSpaceOffset) + $"{sides[i].Name}" + new string(' ', (menuMaxLength/4 - nameSpaceOffset)));
-                
+                for (int i = 0; i < higherCount; i++)
+                {
+                    
+                    //NOTE: Add logic to make sure that in the case of a categorical type not having the same number of indexing as the higher count, that the loop will end as to avoid throwing an ArgumentOutRangeException.
+                    //Particularly adding a try-catch that will catch that IndexOutOfRangeExceptions and break the loop in the case of being caught.
+                    try
+                    {
+                        nameSpaceOffset = entrees[i].Name.Length / 2;
+                        Console.Write(new string(' ', (menuMaxLength / 4 - nameSpaceOffset)) + $"{entrees[i].Name}" + new string(' ', (menuMaxLength / 4 - nameSpaceOffset)));
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        Console.WriteLine(new string(' ', menuDeadCenterLength));
+                    }
+                    try
+                    {
+                        nameSpaceOffset = sides[i].Name.Length / 2;
+                        Console.WriteLine(new string(' ', menuMaxLength / 4 - nameSpaceOffset) + $"{sides[i].Name}" + new string(' ', (menuMaxLength / 4 - nameSpaceOffset)));
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        Console.WriteLine(new string(' ', menuDeadCenterLength));
+                    }
+                }
+                Console.WriteLine(new string(' ', menuMaxLength));
+                Console.Write(new string('-', menuQuarterCenterLength - categoryNames[2].Length / 2) + $"{categoryNames[2]}" + new string('-', menuQuarterCenterLength - categoryNames[2].Length / 2));
+                Console.WriteLine(new string('-', menuQuarterCenterLength - categoryNames[3].Length / 2) + $"{categoryNames[3]}" + new string('-', menuQuarterCenterLength - categoryNames[3].Length / 2));
+                if (beverages.Count > desserts.Count)
+                {
+                    higherCount = beverages.Count;
+                }
+                else
+                {
+                    higherCount = desserts.Count;
+                }
+                //Making sure that both entrees and sides have more than 0 items before
+                if (higherCount > 0 && beverages.Count > 0 && desserts.Count > 0)
+                {
+                    for (int i = 0; i < higherCount; i++)
+                    {
+                        nameSpaceOffset = -1;
+                        //NOTE: Add logic to make sure that in the case of a categorical type not having the same number of indexing as the higher count, that the loop will end as to avoid throwing an ArgumentOutRangeException.
+                        //Particularly adding a try-catch that will catch that IndexOutOfRangeExceptions and break the loop in the case of being caught.
+                        try
+                        {
+                            nameSpaceOffset = entrees[i].Name.Length / 2;
+                            Console.Write(new string(' ', (menuMaxLength / 4 - nameSpaceOffset)) + $"{beverages[i].Name}" + new string(' ', (menuMaxLength / 4 - nameSpaceOffset)));
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            Console.WriteLine(new string(' ', menuDeadCenterLength));
+                        }
+                        try
+                        {
+                            nameSpaceOffset = sides[i].Name.Length / 2;
+                            Console.WriteLine(new string(' ', menuMaxLength / 4 - nameSpaceOffset) + $"{desserts[i].Name}" + new string(' ', (menuMaxLength / 4 - nameSpaceOffset)));
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            Console.WriteLine(new string(' ', menuDeadCenterLength));
+                        }
+                    }
+                }
             }
         }
+
         //DEVELOP A PRODUCT DETAILS METHOD
 
 
