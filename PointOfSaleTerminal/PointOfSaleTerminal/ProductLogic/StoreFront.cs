@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -75,19 +76,53 @@ namespace PointOfSaleTerminal.ProductLogic
 
         //MENU METHODS
 
-        //will display the entire menu and section it all and will then
+        //Overarching method which will allow the user to View the menu, select items to see more info and add to cart by quantity
         public void OrderFood()
         {
+            int selectedFood = -1;
             //will call the menu display and will give options of selection and purchase;
-            throw new NotImplementedException();
+            DisplayMenu();
+            //Will display each menu item in the menu List and assign a number it can be selected by. Will then offer the user to add to cart (by quantity) or return to the menu
+            //Will then allow the user to check out and offer payment options and give blah blah blah
+            //throw new NotImplementedException();
         }
         //Throws each menu item into a list based on its category and will separate and display them based on that information
+        public void SelectMenuItems(int index)
+        {
+            try 
+            {
+                this.Menu[index].DisplayProduct();
+            } catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Index is out of range");
+            }
+        }
+
+        
         //figure out how to make menu hold MealDeal items too
+
+
+
+
+
+
+        /// <summary>
+        /// A method which will display the menu -  it's categories and it's items
+        /// </summary>
         public void DisplayMenu()
         {
             //Will be used to assign a number to each menu item
-            int menuItemValue = 1;
+            //int menuItemValue = -1;
             int nameSpaceOffset = -1;
+            string itemName = "";
+            //index values
+            int indexSpaceOffset = -1;
+            string itemIndex = "";
+            //TOBEIMPLEMENTED 
+            string itemPrice = "";
+            int priceSpaceOffset = -1;
+            //OFFSET USED TO DESIGNATE THE AMOUNT OF SPACE TAKEN UP BETWEEN ALL RELEVANT VALUES
+            int totalContentOffset;
             string[] categoryNames = new string[]
             {
                 $"{(Category)0}s",
@@ -160,8 +195,15 @@ namespace PointOfSaleTerminal.ProductLogic
                     //Particularly adding a try-catch that will catch that IndexOutOfRangeExceptions and break the loop in the case of being caught.
                     try
                     {
-                        nameSpaceOffset = entrees[i].Name.Length / 2;
-                        Console.Write(new string(' ', (menuQuarterCenterLength - nameSpaceOffset)) + $"{entrees[i].Name}" + new string(' ', (menuQuarterCenterLength - nameSpaceOffset)));
+                        itemName = $"{entrees[i].Name} ";
+
+                        itemIndex = $"{Menu.IndexOf(entrees[i]) + 1}. ";
+                       
+                        itemPrice = $"{entrees[i].Price:c} ";
+
+                        string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                        totalContentOffset = completeString.Length / 2 ;
+                        Console.Write(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -169,8 +211,15 @@ namespace PointOfSaleTerminal.ProductLogic
                     }
                     try
                     {
-                        nameSpaceOffset = sides[i].Name.Length / 2;
-                        Console.WriteLine(new string(' ', menuQuarterCenterLength - nameSpaceOffset) + $"{sides[i].Name}" + new string(' ', (menuQuarterCenterLength - nameSpaceOffset)));
+                        itemName = $"{sides[i].Name} ";
+
+                        itemIndex = $"{Menu.IndexOf(sides[i]) + 1}. ";
+
+                        itemPrice = $"{sides[i].Price:c} ";
+
+                        string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                        totalContentOffset = completeString.Length / 2;
+                        Console.WriteLine(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -196,8 +245,15 @@ namespace PointOfSaleTerminal.ProductLogic
                         nameSpaceOffset = -1;
                         try
                         {
-                            nameSpaceOffset = valueItems[i].Name.Length / 2;
-                            Console.WriteLine(new string(' ', menuDeadCenterLength - nameSpaceOffset) + $"{valueItems[i].Name}" + new string(' ', menuDeadCenterLength - nameSpaceOffset));
+                            itemName = $"{valueItems[i].Name} ";
+
+                            itemIndex = $"{Menu.IndexOf(valueItems[i]) + 1}. ";
+
+                            itemPrice = $"{valueItems[i].Price:c} ";
+
+                            string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                            totalContentOffset = completeString.Length / 2;
+                            Console.WriteLine(new string(' ', (menuDeadCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuDeadCenterLength - totalContentOffset)));
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -225,13 +281,19 @@ namespace PointOfSaleTerminal.ProductLogic
                     Console.WriteLine(new string(' ', menuDeadCenterLength));
                     for (int i = 0; i < higherCount; i++)
                     {
-                        nameSpaceOffset = -1;
                         //NOTE: Add logic to make sure that in the case of a categorical type not having the same number of indexing as the higher count, that the loop will end as to avoid throwing an ArgumentOutRangeException.
                         //Particularly adding a try-catch that will catch that IndexOutOfRangeExceptions and break the loop in the case of being caught.
                         try
                         {
-                            nameSpaceOffset = beverages[i].Name.Length / 2;
-                            Console.Write(new string(' ', (menuQuarterCenterLength - nameSpaceOffset)) + $"{beverages[i].Name}" + new string(' ', (menuQuarterCenterLength - nameSpaceOffset)));
+                            itemName = $"{beverages[i].Name} ";
+
+                            itemIndex = $"{Menu.IndexOf(beverages[i]) + 1}. ";
+
+                            itemPrice = $"{beverages[i].Price:c} ";
+
+                            string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                            totalContentOffset = completeString.Length / 2;
+                            Console.Write(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -239,8 +301,15 @@ namespace PointOfSaleTerminal.ProductLogic
                         }
                         try
                         {
-                            nameSpaceOffset = desserts[i].Name.Length / 2;
-                            Console.WriteLine(new string(' ', menuQuarterCenterLength - nameSpaceOffset) + $"{desserts[i].Name}" + new string(' ', (menuQuarterCenterLength - nameSpaceOffset)));
+                            itemName = $"{desserts[i].Name} ";
+
+                            itemIndex = $"{Menu.IndexOf(desserts[i]) + 1}. ";
+
+                            itemPrice = $"{desserts[i].Price:c} ";
+
+                            string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                            totalContentOffset = completeString.Length / 2;
+                            Console.WriteLine(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                         }
                         catch (IndexOutOfRangeException)
                         {

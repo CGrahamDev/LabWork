@@ -96,25 +96,17 @@ try
 }
 catch (FileNotFoundException)
 {
-    StreamWriter writer = new StreamWriter($"{fileName}.txt", true);
+    StreamWriter writer = new StreamWriter($"{fileName}.txt", false);
     //in the case of a file not found exception use a default list of items that'd appear on the menu
     chelseasChickenStore.Menu.AddRange(defaultMenu);
-    
+    chelseasChickenStore.UpdateMenuFile(fileName);
     writer.Close();
 
 }
-chelseasChickenStore.UpdateMenuFile(fileName);
-//test values
-//Product classicChickenSandwhich = new Product("Classic Chicken Sandwhich", 0, "Our classic collosal chicken sandwhich with tomatoes, onions, and lettuce", 3.99m );
-//Product classicChickenFingers = new Product("Classic Chicken Fingers", 1, "Our classically crafted chicken fingers used with our famous decades old recipe", 0.99m);
-//MealDeal doubleChickenMeal = new MealDeal("Chicken Fry Meal", classicChickenSandwhich, classicChickenSandwhich );
 
-//chelseasChickenStore.AddToMenu(classicChickenSandwhich);
-//chelseasChickenStore.AddToMenu(classicChickenFingers);
-chelseasChickenStore.DisplayMenu();
- 
+
 //One of a few nav screens intended (Admin, Edit(edit menu items), Menu/Customer,)
-//ConsoleMenuNavigation();
+ConsoleMenuNavigation();
 
 /* test method
 Console.WriteLine($"{doubleChickenMeal.ToString()}");
@@ -149,7 +141,8 @@ void ConsoleMenuNavigation()
         }
         if (int.TryParse(Console.ReadLine(), out int selectedMenuOption))
         {
-            try { Console.WriteLine($"You have selected {menuOptions[selectedMenuOption]}"); }
+            Console.Clear();
+            try { Console.WriteLine($"You have selected {menuOptions[selectedMenuOption-1]}"); }
             catch (IndexOutOfRangeException)
             {
                 if (selectedMenuOption == adminCode)
