@@ -27,6 +27,7 @@ namespace PointOfSaleTerminal.ProductLogic
         }
 
         //takes in the list of items congregated for a meal and adds each item to the Meal
+        //custom meal
         private void FormMeal(string mealName,params Product[] mealItems)
         {
             MealName = mealName;
@@ -36,7 +37,7 @@ namespace PointOfSaleTerminal.ProductLogic
                 Meal[i] = mealItems[i];
             }
         }
-
+        //default meal (entree/value items + Fries or Fingers + Drink + dessert) overload method
 
         private void CalculateDealPrice()
         {

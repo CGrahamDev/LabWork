@@ -26,6 +26,48 @@ using PointOfSaleTerminal.ProductLogic;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
+//Fast Food - Chelsea's Comically Collossal Chicken
+
+string fileName = "food-menu";
+
+List<Product> defaultMenu = new List<Product>()
+{
+    //ADD BASIC ITEMS THAT WILL ALWAYS BE IN THE MENU
+
+    //Entrees
+    new Product("Classic Chicken Sandwhich", 0, "Our classic collosal chicken sandwhich w/ tomatoes, onion, lettuce and mayo ", 3.99m ),
+    new Product("Spicy Chicken Sandwhich", 0, "Our classic collosal chicken sandwhich w/ tomatoes, onions, lettuce, mayo and a spicy twist", 3.99m),
+    new Product("Classic Boneless Tenders",0,"The behemoth beloved boneless wings you know and love /8x ct.",7.99m),
+    new Product("Spicy Boneless Tenders",0,"The behemoth beloved boneless wings you know and love w/ a spicy twist /8x ct.",7.99m),
+    new Product("Classic Bone-In Breasts",0,"Our famous massive chicken breast seasoned w/ our 12 herbs and spices sprinkled w/ a lil' lemon /2lb.",11.99m),
+    new Product("Spicy Bone-In Breasts",0,"Our famous massive chicken breast seasoned w/ our 12 herbs and spices sprinkled w/ a lil' lemon and cajun seasoning /2lb.",11.99m),
+
+    //SIDES 
+    new Product("Classic Chicken Fingers", 1, "Our classically crafted chicken fingers, fun for the whole family /12x ct.", 2.99m),
+    new Product("Spicy Chicken Fingers", 1, "Our classically crafted chicken fingers, fun for the whole family with an added spice /12x ct.", 2.99m),
+    new Product("Southern Lousiana Fries", 1, "Our fries seasoned with a recipe borrowed from a certain sister company", 1.99m),
+    new Product("Cajun Fries", 1, "Spicy, delicious fries seasoned to perfection", 1.99m),
+    new Product("Collosal Chicken Nuggets", 1, "4 MASSIVE chicken nuggets sold at an amazing value", 1.99m),
+
+    //VALUE ITEMS
+    new Product("Value Wings",2,"Beautifully affordable and delicious wings",1.29m),
+    new Product("Spicy Value Wings",2,"Beautifully affordable and delicious wings w/ a lemony spice added",1.29m),
+    new Product("Normal Sized Chicken Sandwhich",2,"Our NORMAL sized chicken sandwhich w/ mayo",1.99m),
+    new Product("Spicy Normal Chicken Sandwhich",2,"Our NORMAL sized chicken sandwhich w/ mayo and a spicy kick",1.99m),
+    new Product("Chicken Burria Tacos",2,"A little something we learned from our friends down south ;)",1.49m),
+    //BEVS
+    new Product("Sprite",3,"A lemon-twist soda",0.99m),
+    new Product("Coca Cola",3,"Classic Coke",0.99m),
+    new Product("Raspberry Lemonade",3,"Lemonade w/ Raspberry flavoring",0.99m),
+    new Product("Lemonade",3,"Lemonade, great for summer days",0.99m),
+    new Product("Water",3,"refreshing!",0.99m),
+    //DESSERTS
+    new Product("Chicken Flavoureed Ice Cream",4,"Honestly really gross, but it's on theme and for some reason it sells okay",2.19m),
+    new Product("Vanilla Chip Chocolate Ice Cream",4,"refreshing with a rich and delicious taste",3.49m),
+    new Product("Strawberry Cheesecake",4,$"Strawberry cheesecake prepared by hand in-house and served fresh every day {9.99:c}/full cake(8 slices) ",1.49m),
+    new Product("Vanilla Milkshake",4,"A milkshake made w/ real vanilla and Whole Milk",2.49m),
+    new Product("Banana Milkshake",4,"A milkshake made w/ real vanilla, bananas and Whole Milk",2.49m),
+};
 StoreFront chelseasChickenStore = new StoreFront("Chelsea's Comically Collosal Chicken");
 
 string[] menuOptions = new string[4]
@@ -40,26 +82,37 @@ const int adminCode = 958627;
 
 try
 {
-    StreamReader reader = new StreamReader("menu.txt");
+    StreamReader reader = new StreamReader($"{fileName}.txt");
     reader.Close();
+    if (chelseasChickenStore.ReadMenuFile(fileName))
+    {
+        Console.WriteLine("Menu loaded!");
+    }
+    else
+    {
+        throw new FileNotFoundException();
+    }
+
 }
 catch (FileNotFoundException)
 {
-    StreamWriter writer = new StreamWriter("menu.txt");
-    writer = new StreamWriter("store_info.txt");
+    StreamWriter writer = new StreamWriter($"{fileName}.txt", true);
+    //in the case of a file not found exception use a default list of items that'd appear on the menu
+    chelseasChickenStore.Menu.AddRange(defaultMenu);
+    
     writer.Close();
 
 }
-
+chelseasChickenStore.UpdateMenuFile(fileName);
 //test values
-Product classicChickenSandwhich = new Product("Classic Chicken Sandwhich", 0, "Our classic collosal chicken sandwhich with tomatoes, onions, and lettuce", 3.99m );
-Product classicChickenFingers = new Product("Classic Chicken Fingers", 1, "Our classically crafted chicken fingers used with our famous decades old recipe", 0.99m);
+//Product classicChickenSandwhich = new Product("Classic Chicken Sandwhich", 0, "Our classic collosal chicken sandwhich with tomatoes, onions, and lettuce", 3.99m );
+//Product classicChickenFingers = new Product("Classic Chicken Fingers", 1, "Our classically crafted chicken fingers used with our famous decades old recipe", 0.99m);
 //MealDeal doubleChickenMeal = new MealDeal("Chicken Fry Meal", classicChickenSandwhich, classicChickenSandwhich );
 
-chelseasChickenStore.AddToMenu(classicChickenSandwhich);
-chelseasChickenStore.AddToMenu(classicChickenFingers);
+//chelseasChickenStore.AddToMenu(classicChickenSandwhich);
+//chelseasChickenStore.AddToMenu(classicChickenFingers);
 chelseasChickenStore.DisplayMenu();
-
+ 
 //One of a few nav screens intended (Admin, Edit(edit menu items), Menu/Customer,)
 //ConsoleMenuNavigation();
 
@@ -68,36 +121,6 @@ Console.WriteLine($"{doubleChickenMeal.ToString()}");
 */
 
 Console.ReadKey();
-
-
-//Fast Food - Chelsea's Comically Collossal Chicken
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -111,23 +134,12 @@ Console.ReadKey();
 
 
 
-void UpdateMenuFile()
-{
-    throw new NotImplementedException();
-    /*TEST VALUES
-     * StreamWriter writer = new StreamWriter("menu.txt", true);
-    writer.WriteLine(classicChickenSandwhich.ToString);
-    writer.Close();
-    */
-}
-
-
-
 //will contain everything needed to navigate the menu
 void ConsoleMenuNavigation()
 {
     Console.WriteLine("Welcome to Chelsea's Comically Collossal Chicken");
-    while (true)
+    
+        while (true)
     {
         bool validMenuOption = false;
         Console.WriteLine($"Enter the number for the menu option:");

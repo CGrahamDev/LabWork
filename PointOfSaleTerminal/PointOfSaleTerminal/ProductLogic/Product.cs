@@ -30,7 +30,7 @@ namespace PointOfSaleTerminal.ProductLogic
         //CSV TO STRING METHOD FOR FILE SAVING
         public override string ToString()
         {
-            return $"{Name},{MenuCategory},{Description},{Price}";
+            return $"{Name}|{(int)MenuCategory}|{Description}|{Price}";
         }
         //method to display items from Cart
         public void DisplayProduct()
