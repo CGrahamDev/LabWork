@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace PointOfSaleTerminal.ProductLogic
 {
@@ -17,8 +19,11 @@ namespace PointOfSaleTerminal.ProductLogic
         //REFACTOR TO INCLUDE THIS LOGIC
         public string StoreName { get; set; }
         public List<MealDeal> Meals { get; set; }
-        public Dictionary<int, Product> NumberToProductDictionary { get; private set; }
+        //public Dictionary<int, Product> NumberToProductDictionary { get; private set; }
         private int menuCounter = 1;
+        public const int menuMaxLength = 128;
+        public const int menuDeadCenterLength = menuMaxLength / 2;
+        public const int menuQuarterCenterLength = menuDeadCenterLength / 2;
 
         //constructor 
         public StoreFront(string storeName)
@@ -31,13 +36,22 @@ namespace PointOfSaleTerminal.ProductLogic
         }
 
         //REWRITE ALL METHODS SO THAT THEY MAKE SENSE NOW THAT THIS CLASS IS NO LONGER STATIC
+        //consider rewriting them as bools to send signal of item being successfully added
         //methods
 
         //CART METHODS
         public void AddToCart(Product item)
         {
+            bool cartAdditionSuccess = false;
             Cart.Add(item);
-            Console.WriteLine("Added to Cart!");
+        }
+        public void AddToCart(int quantity, Product item)
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                Cart.Add(item);
+            }
+
         }
         public void AddToCart(MealDeal combo)
         {
@@ -47,6 +61,8 @@ namespace PointOfSaleTerminal.ProductLogic
             }
             Console.WriteLine($"Added {combo.MealName}");
         }
+
+
         public void ClearCart()
         {
             Cart.Clear();
@@ -56,13 +72,14 @@ namespace PointOfSaleTerminal.ProductLogic
             //add dfuntionality for seperately displaying meal deals and displaying single item products
             foreach (Product item in Cart)
             {
-                item.DisplayProduct();
+                DisplayProductDetails(item);
             }
         }
         // will be used in other functions to display a specific item that might be being affeceted by any customer actions
+        //maybe change this to take an int parameter or maybe overload that
         public void DisplayFromCart(Product product)
         {
-            product.DisplayProduct();
+            DisplayProductDetails(product);
         }
         public void CheckOut()
         {
@@ -76,29 +93,48 @@ namespace PointOfSaleTerminal.ProductLogic
 
         //MENU METHODS
 
-        //Overarching method which will allow the user to View the menu, select items to see more info and add to cart by quantity
-        public void OrderFood()
-        {
-            int selectedFood = -1;
-            //will call the menu display and will give options of selection and purchase;
-            DisplayMenu();
-            //Will display each menu item in the menu List and assign a number it can be selected by. Will then offer the user to add to cart (by quantity) or return to the menu
-            //Will then allow the user to check out and offer payment options and give blah blah blah
-            //throw new NotImplementedException();
-        }
+
         //Throws each menu item into a list based on its category and will separate and display them based on that information
-        public void SelectMenuItems(int index)
+        /// <summary>
+        /// Will Select a menu product by index and display that item and its details 
+        /// </summary>
+        /// <param name="index"> integer value used to index item in the Menu Property</param>
+        /// <returns>returns true if indexed item is able to be selected and returns true if otherwise </returns>
+        public bool SelectMenuItems(int index)
         {
-            try 
+            Console.Clear();
+            try
             {
-                this.Menu[index].DisplayProduct();
-            } catch (IndexOutOfRangeException)
+                DisplayProductDetails(Menu[index]);
+                return true;
+            }
+            catch (IndexOutOfRangeException)
             {
-                Console.WriteLine("Index is out of range");
+                Console.WriteLine("Entered index is not tied to any item on the menu");
+                return false;
             }
         }
+        //method to display items from Cart
+        public void DisplayProductDetails(Product selectedProduct)
+        {
 
-        
+            string itemName = $"{selectedProduct.Name} ";
+            string itemIndex = $"{Menu.IndexOf(selectedProduct) + 1}. ";
+            string itemPrice = $"{selectedProduct.Price:c} ";
+            string itemDescription = $"{selectedProduct.Description}";
+            int offset = -1;
+
+            Console.WriteLine(new string('-', menuMaxLength));
+            offset = (itemIndex.Length + itemName.Length) / 2;
+            Console.WriteLine(new string(' ', menuDeadCenterLength - offset) + $"{itemIndex}{itemName}" + new string(' ', menuDeadCenterLength - offset));
+            offset = (itemDescription.Length / 2);
+            Console.WriteLine(new string(' ', menuQuarterCenterLength) + new string('-', menuDeadCenterLength) + new string(' ', menuQuarterCenterLength));
+            Console.WriteLine(new string(' ', menuDeadCenterLength - offset) + $"{itemDescription}" + new string(' ', menuDeadCenterLength - offset));
+            offset = itemPrice.Length / 2;
+            Console.WriteLine(new string(' ', menuDeadCenterLength - offset) + $"{itemPrice}" + new string(' ', menuDeadCenterLength - offset));
+        }
+
+
         //figure out how to make menu hold MealDeal items too
 
 
@@ -132,9 +168,6 @@ namespace PointOfSaleTerminal.ProductLogic
                 $"{(Category)4}s",
                 $"{(Category)5}s",
             };
-            const int menuMaxLength = 128;
-            const int menuDeadCenterLength = menuMaxLength / 2;
-            const int menuQuarterCenterLength = menuDeadCenterLength / 2;
             //used to determine which of the two category lists at is time is holding more items
             int higherCount = 0;
             List<Product> entrees = new List<Product>();
@@ -198,11 +231,11 @@ namespace PointOfSaleTerminal.ProductLogic
                         itemName = $"{entrees[i].Name} ";
 
                         itemIndex = $"{Menu.IndexOf(entrees[i]) + 1}. ";
-                       
+
                         itemPrice = $"{entrees[i].Price:c} ";
 
-                        string completeString = $"{itemIndex}{itemName}| {itemPrice}";
-                        totalContentOffset = completeString.Length / 2 ;
+                        string completeString = $"{itemIndex}{itemName}- {itemPrice}";
+                        totalContentOffset = completeString.Length / 2;
                         Console.Write(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                     }
                     catch (IndexOutOfRangeException)
@@ -217,7 +250,7 @@ namespace PointOfSaleTerminal.ProductLogic
 
                         itemPrice = $"{sides[i].Price:c} ";
 
-                        string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                        string completeString = $"{itemIndex}{itemName}- {itemPrice}";
                         totalContentOffset = completeString.Length / 2;
                         Console.WriteLine(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                     }
@@ -251,7 +284,7 @@ namespace PointOfSaleTerminal.ProductLogic
 
                             itemPrice = $"{valueItems[i].Price:c} ";
 
-                            string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                            string completeString = $"{itemIndex}{itemName}- {itemPrice}";
                             totalContentOffset = completeString.Length / 2;
                             Console.WriteLine(new string(' ', (menuDeadCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuDeadCenterLength - totalContentOffset)));
                         }
@@ -291,7 +324,7 @@ namespace PointOfSaleTerminal.ProductLogic
 
                             itemPrice = $"{beverages[i].Price:c} ";
 
-                            string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                            string completeString = $"{itemIndex}{itemName}- {itemPrice}";
                             totalContentOffset = completeString.Length / 2;
                             Console.Write(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                         }
@@ -307,7 +340,7 @@ namespace PointOfSaleTerminal.ProductLogic
 
                             itemPrice = $"{desserts[i].Price:c} ";
 
-                            string completeString = $"{itemIndex}{itemName}| {itemPrice}";
+                            string completeString = $"{itemIndex}{itemName}- {itemPrice}";
                             totalContentOffset = completeString.Length / 2;
                             Console.WriteLine(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
                         }
@@ -360,7 +393,7 @@ namespace PointOfSaleTerminal.ProductLogic
 
             }
         }
-        
+
         public void UpdateMenuFile(string fileName)
         {
             //food-menu is what Ill be using as a file name, but the idea is that this would allow for easy switching to new menus and easy categorizing (dates, seasons, times of day, etc etc)

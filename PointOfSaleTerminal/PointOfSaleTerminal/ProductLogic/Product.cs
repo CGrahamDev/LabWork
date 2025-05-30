@@ -10,7 +10,7 @@ namespace PointOfSaleTerminal.ProductLogic
     internal class Product
     {
         //product class with a name, category, description, and price for each item. 
-        
+
         public string Name { get; set; }
         public Category MenuCategory { get; set; }
         public string Description { get; set; }
@@ -32,19 +32,14 @@ namespace PointOfSaleTerminal.ProductLogic
         {
             return $"{Name}|{(int)MenuCategory}|{Description}|{Price}";
         }
-        //method to display items from Cart
-        public void DisplayProduct()
-        {
-            Console.WriteLine($"{Name} {Price:c}\n" +
-                $"{Description}\n");
-        }
+
         //must be used by an admin to add a price
         public void UpdatePrice(decimal newPrice)
         {
             this.Price = newPrice;
         }
-        
 
-        
+
+
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PointOfSaleTerminal.PaymentProcessing
+namespace PointOfSaleTerminal.IPaymentProcessing
 {
-    internal class PaymentProcessor
+    internal interface IPaymentProcessor
     {
     }
 }

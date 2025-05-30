@@ -19,16 +19,16 @@ namespace PointOfSaleTerminal.ProductLogic
         {
             
         }*/
-        public MealDeal(string mealName,params Product[] mealItems)
+        public MealDeal(string mealName, params Product[] mealItems)
         {
-            
+
             FormMeal(mealName, mealItems);
             CalculateDealPrice();
         }
 
         //takes in the list of items congregated for a meal and adds each item to the Meal
         //custom meal
-        private void FormMeal(string mealName,params Product[] mealItems)
+        private void FormMeal(string mealName, params Product[] mealItems)
         {
             MealName = mealName;
             Meal = new Product[mealItems.Length];
@@ -71,7 +71,7 @@ namespace PointOfSaleTerminal.ProductLogic
 
         public override string ToString()
         {
-           // Dictionary<string, List<string>> mealNameToProperties = new Dictionary<string, List<string>>();
+            // Dictionary<string, List<string>> mealNameToProperties = new Dictionary<string, List<string>>();
             List<string> items = new List<string>();
             List<string> orderedItems = new List<string>(); //add a mechanism to order the items in the strings by Entree, Side, Value, Beverage, Dessert 
             string mealInfo = "";
