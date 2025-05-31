@@ -25,6 +25,7 @@ Optional enhancements:
 using Microsoft.Win32.SafeHandles;
 using PointOfSaleTerminal.ProductLogic;
 using System.Diagnostics.Contracts;
+using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -108,8 +109,12 @@ catch (FileNotFoundException)
 
 
 //One of a few nav screens intended (Admin, Edit(edit menu items), Menu/Customer,)
-ConsoleMenuNavigation();
-
+while (true)
+{
+    
+    Console.Clear();
+    ConsoleMenuNavigation();
+};
 /* test method
 Console.WriteLine($"{doubleChickenMeal.ToString()}");
 */
@@ -124,23 +129,31 @@ Console.ReadKey();
 
 
 //METHODS
-
+//make methods that will automatically format the strings based on the center length and wiill take in string params: e.g. quartCenterLength method will take in two string params to be offset and printed by and one string param to decide what will be p[laced in the new string() method and will format the two strings
 
 
 
 //will contain everything needed to navigate the menu
 void ConsoleMenuNavigation()
 {
-    Console.WriteLine("Welcome to Chelsea's Comically Collossal Chicken");
+    string prompt = "";
+    StoreFront.DisplayMax('-');
+    string storeWelcome = "Welcome to Chelsea's Comically Collossal Chicken";
+    StoreFront.DisplayDeadCenter(' ', storeWelcome);
+    StoreFront.DisplayMax('-');
 
     while (true)
     {
         bool validMenuOption = false;
-        Console.WriteLine($"Enter the number for the console menu option:");
+        string consoleMenuPrompt = "Enter the number for the console menu option: ";
+        StoreFront.DisplayDeadCenter(' ', consoleMenuPrompt);
         for (int i = 0; i < consoleMenuOptions.Length; i++)
         {
-            Console.WriteLine($"{i + 1}: {consoleMenuOptions[i]}");
+            string menuOption = $"{i + 1}: {consoleMenuOptions[i]} ";
+            StoreFront.DisplayDeadCenter(' ', menuOption);
         }
+        StoreFront.DisplayMax('-');
+        Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
         if (int.TryParse(Console.ReadLine(), out int selectedMenuOption))
         {
             Console.Clear();
@@ -163,13 +176,15 @@ void ConsoleMenuNavigation()
             switch (selectedMenuOption)
             {
                 case 1: // Adding items and combos to cart
-                    OrderFood();
+                    chelseasChickenStore.OrderFood();
                     break;
                 case 2: // displaying cart 
                     chelseasChickenStore.DisplayCart();
                     break;
                 case 3: //Cart clearing
-                    Console.WriteLine("Are you sure? This will empty your cart!");
+                    prompt = "Are you sure? This will empty your cart!";
+                    StoreFront.DisplayMax('-');
+                    StoreFront.DisplayDeadCenter(' ', prompt);
                     string userAnswer = AnswerYOrN();
                     if (userAnswer == "y")
                     {
@@ -198,224 +213,7 @@ void AdminMenu()
     throw new NotImplementedException();
 }
 
-//Overarching method which will allow the user to View the menu, select items to see more info and add to cart by quantity
 
-void OrderFood()
-{
-    int offset = 0;
-    int selectedFood = -1;
-    bool continueVariable = true;
-    bool isValidNumber = false;
-    string introText = "Enter a number to select the desired menu item";
-    do
-    {
-
-        //will call the menu display and will give options of selection and purchase;
-        chelseasChickenStore.DisplayMenu();
-        //Will display each menu item in the menu List and assign a number it can be selected by. Will then offer the user to add to cart (by quantity) or return to the menu
-        Console.WriteLine(new string('-', StoreFront.menuMaxLength) );
-        offset = introText.Length / 2;
-        Console.WriteLine(new string(' ',StoreFront.menuDeadCenterLength - offset) + $"{introText}" + new string(' ', StoreFront.menuDeadCenterLength - offset));
-        Console.WriteLine(new string('-', StoreFront.menuMaxLength));
-        Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
-        if (isValidNumber = int.TryParse(Console.ReadLine(), out selectedFood))
-        {
-            selectedFood -= 1;
-            try
-            {
-                Product selectedProduct = chelseasChickenStore.Menu[selectedFood];
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                Console.WriteLine($"Argument out of range. Please enter a number 1-{chelseasChickenStore.Menu.Count}");
-                Console.WriteLine("Press any key to continue!");
-                Console.ReadKey();
-                Console.Clear();
-                Console.WriteLine("\x1b[3J");
-                continue;
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Console.WriteLine($"Argument out of range. Please enter a number 1-{chelseasChickenStore.Menu.Count}");
-                Console.WriteLine("Press any key to continue!");
-                Console.ReadKey();
-                Console.Clear();
-                Console.WriteLine("\x1b[3J");
-                continue;
-            }
-            Console.Clear();
-            Console.WriteLine("\x1b[3J");
-
-            do
-            {
-                chelseasChickenStore.SelectMenuItems(selectedFood);
-                string cartActionString = $"[1] Add To Cart ";
-                string returnActionString = $"[2] Return To Menu ";
-                string[] secondaryMenuActions =
-                {
-                cartActionString,
-                returnActionString
-                };
-
-                Console.WriteLine(new string('-', StoreFront.menuMaxLength));
-                offset = cartActionString.Length / 2;
-                Console.Write(new string(' ', StoreFront.menuQuarterCenterLength - offset) + $"{cartActionString}" + new string(' ', StoreFront.menuQuarterCenterLength - offset));
-                offset = returnActionString.Length / 2;
-                Console.WriteLine(new string(' ', StoreFront.menuQuarterCenterLength - offset) + $"{returnActionString}" + new string(' ', StoreFront.menuQuarterCenterLength - offset));
-                int secondActionIndex = -1;
-                continueVariable = true;
-                Console.WriteLine(new string('-', StoreFront.menuMaxLength));
-                Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
-                if (int.TryParse(Console.ReadLine(), out secondActionIndex))
-                {
-                    secondActionIndex -= 1;
-                    try
-                    {
-                        Console.Clear();
-                        _ = secondaryMenuActions[secondActionIndex];
-
-                    }
-                    catch (ArgumentOutOfRangeException)
-                    {
-                        Console.WriteLine("Invalid argument please enter 1 or 2.");
-                        Console.Write("Press any key to continue: ");
-                        Console.ReadKey();
-                        continue;
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Console.WriteLine("Invalid index please enter 1 or 2.");
-                        Console.Write("Press any key to continue: ");
-                        Console.ReadKey();
-                        continue;
-                    }
-                    continueVariable = false;
-                    switch (secondActionIndex)
-                    {
-                        case 0:
-                            do
-                            {
-                                int thirdActionIndex = -1;
-                                string[] addToCartOptions = new string[]
-                                {
-                                "[1] Add One ",
-                                "[2] Add More ",
-                                "[3] Return ",
-                                };
-                                Console.Clear();
-                                chelseasChickenStore.SelectMenuItems(selectedFood);
-                                Console.WriteLine(new string('-', StoreFront.menuMaxLength));
-                                offset = addToCartOptions[0].Length / 2;
-                                Console.Write(new string(' ', StoreFront.menuQuarterCenterLength - offset) + $"{addToCartOptions[0]}" + new string(' ', StoreFront.menuQuarterCenterLength - offset));
-                                offset = addToCartOptions[1].Length / 2;
-                                Console.WriteLine(new string(' ', StoreFront.menuQuarterCenterLength - offset) + $"{addToCartOptions[1]}" + new string(' ', StoreFront.menuQuarterCenterLength - offset));
-                                offset = addToCartOptions[2].Length / 2;
-                                Console.WriteLine(new string(' ', StoreFront.menuQuarterCenterLength) + new string('-', StoreFront.menuDeadCenterLength) + new string(' ', StoreFront.menuQuarterCenterLength));
-                                Console.WriteLine(new string(' ', StoreFront.menuDeadCenterLength - offset) + $"{addToCartOptions[2]}" + new string(' ', StoreFront.menuDeadCenterLength - offset));
-                                Console.WriteLine(new string('-', StoreFront.menuMaxLength));
-                                Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
-                                if (int.TryParse(Console.ReadLine(), out thirdActionIndex))
-                                {
-                                    thirdActionIndex -= 1;
-                                    try
-                                    {
-                                        _ = addToCartOptions[thirdActionIndex];
-                                    }
-                                    catch (ArgumentOutOfRangeException)
-                                    {
-                                        Console.WriteLine($"Invalid Input! Please enter an input between 1 and {addToCartOptions.Length}");
-                                        Console.WriteLine("Press any key to continue");
-                                        Console.ReadKey();
-                                        Console.Clear();
-                                        continue;
-                                    }
-                                    catch (IndexOutOfRangeException)
-                                    {
-                                        Console.WriteLine($"Invalid Input! Please enter an input between 1 and {addToCartOptions.Length}");
-                                        Console.WriteLine("Press any key to continue");
-                                        Console.ReadKey();
-                                        Console.Clear();
-                                        continue;
-                                    }
-                                    switch (thirdActionIndex)
-                                    {
-                                        case 0:
-                                            chelseasChickenStore.AddToCart(chelseasChickenStore.Menu[selectedFood]);
-                                            string confirmationText = $"{chelseasChickenStore.Menu[selectedFood].Name} has been added to your cart! Your cart now has {chelseasChickenStore.Cart.Count} items!";
-                                            offset = confirmationText.Length / 2;
-                                            Console.WriteLine(new string(' ', StoreFront.menuDeadCenterLength - offset) + $"{confirmationText}" + new string(' ', StoreFront.menuDeadCenterLength - offset));
-                                            continueVariable = false;
-                                            break;
-                                        case 1:
-                                            //asks how many a user wants to add then addds that many to the cart | will display item and then will display quantity like xNumber to the right of the item in the receipt
-                                            int fourthActionIndex = -1;
-                                            string question = "How Many Would you like to add to your cart? (MAX:10)";
-                                            offset = question.Length / 2;
-                                            Console.WriteLine(new string(' ', StoreFront.menuDeadCenterLength - offset) + $"{question}" + new string(' ', StoreFront.menuDeadCenterLength - offset));
-                                            Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
-                                            if (int.TryParse(Console.ReadLine(), out fourthActionIndex))
-                                            {
-                                                if (fourthActionIndex >= 1 && fourthActionIndex <= 10)
-                                                {
-                                                    chelseasChickenStore.AddToCart(fourthActionIndex, chelseasChickenStore.Menu[selectedFood]);
-                                                    confirmationText = $"{chelseasChickenStore.Menu[selectedFood].Name} has been added to your cart {fourthActionIndex} times! Your cart now has {chelseasChickenStore.Cart.Count} items!";
-                                                    offset = confirmationText.Length / 2;
-                                                    Console.WriteLine(new string(' ', StoreFront.menuDeadCenterLength - offset) + $"{confirmationText}" + new string(' ', StoreFront.menuDeadCenterLength - offset));
-                                                }
-                                                else if (fourthActionIndex > 10)
-                                                {
-                                                    Console.WriteLine("Sorry you can only add 10 items at a time! Thank You!");
-                                                    Console.WriteLine("Press any key to continue!");
-                                                    Console.ReadKey();
-                                                    Console.Clear();
-                                                    continue;
-                                                }
-                                                else
-                                                {
-                                                    Console.WriteLine("Operation failed! Can't add 0 or less objects to the cart!");
-                                                    Console.WriteLine("Press any key to continue!");
-                                                    Console.ReadKey();
-                                                    Console.Clear();
-                                                    continue;
-                                                }
-                                            }
-                                            continueVariable = false;
-                                            break;
-                                        case 2:
-                                            OrderFood();
-                                            break;
-                                    }
-                                    break;
-                                }
-                            } while (true);
-                            break;
-                        case 1:
-                            //recursive usage of method perhaps?
-                            OrderFood();
-
-                            break;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Input... Please enter a number to choose the desired option.");
-                    Console.WriteLine("Press Any Key To Continue");
-                    Console.ReadKey(); 
-                    Console.Clear();
-                    continue;
-                }
-            } while (continueVariable);
-        }
-        else
-        {
-            Console.WriteLine("Invalid Input... Please enter a number to choose the desired option.");
-            Console.WriteLine("Press Any Key To Continue");
-            Console.ReadKey();
-            Console.Clear();
-            continue;
-        }
-    } while (continueVariable);
-}
 
 
 //will contain all of the necessary food options for ordering and provide the ability to order.
@@ -425,8 +223,14 @@ string AnswerYOrN()
 {
     while (true)
     {
-        Console.WriteLine("Answer \"y\" or \"n\"");
+        int i = 0;
+        StoreFront.DisplayMax('-');
+        string prompt = "Answer \"y\" or \"n\"";
+        StoreFront.DisplayDeadCenter(' ', prompt);
+        StoreFront.DisplayMax('-');
+        Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
         string answer = Console.ReadLine().ToLower();
+
         switch (answer)
         {
             case "y":
@@ -435,6 +239,9 @@ string AnswerYOrN()
                 break;
             default:
                 Console.WriteLine("Invalid input: please enter \"y\" or \"n\"");
+                i++;
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey();
                 continue;
         }
     }

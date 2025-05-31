@@ -15,11 +15,8 @@ namespace PointOfSaleTerminal.ProductLogic
     {
         public List<Product> Cart { get; private set; }
         public List<Product> Menu { get; private set; }
-        //public List<Dictionary<int,Product>> Menu {  get; private set; }
-        //REFACTOR TO INCLUDE THIS LOGIC
         public string StoreName { get; set; }
         public List<MealDeal> Meals { get; set; }
-        //public Dictionary<int, Product> NumberToProductDictionary { get; private set; }
         private int menuCounter = 1;
         public const int menuMaxLength = 128;
         public const int menuDeadCenterLength = menuMaxLength / 2;
@@ -42,7 +39,6 @@ namespace PointOfSaleTerminal.ProductLogic
         //CART METHODS
         public void AddToCart(Product item)
         {
-            bool cartAdditionSuccess = false;
             Cart.Add(item);
         }
         public void AddToCart(int quantity, Product item)
@@ -61,8 +57,6 @@ namespace PointOfSaleTerminal.ProductLogic
             }
             Console.WriteLine($"Added {combo.MealName}");
         }
-
-
         public void ClearCart()
         {
             Cart.Clear();
@@ -92,7 +86,218 @@ namespace PointOfSaleTerminal.ProductLogic
 
 
         //MENU METHODS
+        //Overarching method which will allow the user to View the menu, select items to see more info and add to cart by quantity
 
+        public void OrderFood()
+        {
+            int selectedFood = -1;
+
+            bool isValidNumber = false;
+            string introText = "Enter a number to select the desired menu item";
+            string exitText = "Press any key to continue:";
+            do
+            {
+                //will call the menu display and will give options of selection and purchase;
+                DisplayMenu();
+                //Will display each menu item in the menu List and assign a number it can be selected by. Will then offer the user to add to cart (by quantity) or return to the menu
+                DisplayMax('-'); 
+                DisplayDeadCenter(' ', introText);
+                DisplayMax('-');
+                Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
+                if (isValidNumber = int.TryParse(Console.ReadLine(), out selectedFood))
+                {
+                    selectedFood -= 1;
+                    try
+                    {
+                        Product selectedProduct = Menu[selectedFood];
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        Console.WriteLine($"Argument out of range. Please enter a number 1-{Menu.Count}");
+                        Console.WriteLine("Press any key to continue!");
+                        Console.ReadKey();
+                        Console.Clear();
+                        Console.WriteLine("\x1b[3J");
+                        continue;
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        Console.WriteLine($"Argument out of range. Please enter a number 1-{Menu.Count}");
+                        Console.WriteLine("Press any key to continue!");
+                        Console.ReadKey();
+                        Console.Clear();
+                        Console.WriteLine("\x1b[3J");
+                        continue;
+                    }
+                    Console.Clear();
+                    Console.WriteLine("\x1b[3J");
+
+                    do
+                    {
+                        SelectMenuItems(selectedFood);
+                        string cartActionString = $"[1] Add To Cart ";
+                        string returnActionString = $"[2] Return To Menu ";
+                        string[] secondaryMenuActions =
+                        {
+                        cartActionString,
+                        returnActionString
+                        };
+
+                        DisplayMax('-');
+                        DisplayQuarterCenter(' ', cartActionString);
+                        DisplayQuarterCenter(' ', returnActionString, true);
+                        int secondActionIndex = -1;
+
+                        DisplayMax('-');
+                        Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
+                        if (int.TryParse(Console.ReadLine(), out secondActionIndex))
+                        {
+                            secondActionIndex -= 1;
+                            try
+                            {
+                                Console.Clear();
+                                _ = secondaryMenuActions[secondActionIndex];
+
+                            }
+                            catch (ArgumentOutOfRangeException)
+                            {
+                                Console.WriteLine("Invalid argument please enter 1 or 2.");
+                                Console.Write("Press any key to continue: ");
+                                Console.ReadKey();
+                                continue;
+                            }
+                            catch (IndexOutOfRangeException)
+                            {
+                                Console.WriteLine("Invalid index please enter 1 or 2.");
+                                Console.Write("Press any key to continue: ");
+                                Console.ReadKey();
+                                continue;
+                            }
+                            switch (secondActionIndex)
+                            {
+                                case 0:
+                                    do
+                                    {
+                                        int thirdActionIndex = -1;
+                                        string[] addToCartOptions = new string[]
+                                        {
+                                "[1] Add One ",
+                                "[2] Add More ",
+                                "[3] Return ",
+                                        };
+                                        Console.Clear();
+                                        SelectMenuItems(selectedFood);
+                                        Console.WriteLine(new string('-', StoreFront.menuMaxLength));
+                                        DisplayQuarterCenter(' ', addToCartOptions[0]);
+                                        DisplayQuarterCenter(' ', addToCartOptions[1], true);
+                                        DisplayDeadCenter(' ', new string('-', StoreFront.menuDeadCenterLength));
+                                        DisplayDeadCenter(' ', addToCartOptions[2]);
+                                        Console.WriteLine(new string('-', StoreFront.menuMaxLength));
+                                        Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
+                                        if (int.TryParse(Console.ReadLine(), out thirdActionIndex))
+                                        {
+                                            thirdActionIndex -= 1;
+                                            try
+                                            {
+                                                _ = addToCartOptions[thirdActionIndex];
+                                            }
+                                            catch (ArgumentOutOfRangeException)
+                                            {
+                                                Console.WriteLine($"Invalid Input! Please enter an input between 1 and {addToCartOptions.Length}");
+                                                Console.WriteLine("Press any key to continue");
+                                                Console.ReadKey();
+                                                Console.Clear();
+                                                continue;
+                                            }
+                                            catch (IndexOutOfRangeException)
+                                            {
+                                                Console.WriteLine($"Invalid Input! Please enter an input between 1 and {addToCartOptions.Length}");
+                                                Console.WriteLine("Press any key to continue");
+                                                Console.ReadKey();
+                                                Console.Clear();
+                                                continue;
+                                            }
+                                            switch (thirdActionIndex)
+                                            {
+                                                case 0:
+                                                    AddToCart(Menu[selectedFood]);
+                                                    string confirmationText = $"{Menu[selectedFood].Name} has been added to your cart! Your cart now has {Cart.Count} items!";
+                                                    DisplayDeadCenter(' ', confirmationText);
+                                                    DisplayDeadCenter(' ', exitText);
+                                                    Console.Write(new string(' ', menuDeadCenterLength));
+                                                    Console.ReadKey();
+                                                    return;
+                                                case 1:
+                                                    //asks how many a user wants to add then addds that many to the cart | will display item and then will display quantity like xNumber to the right of the item in the receipt
+                                                    int fourthActionIndex = -1;
+                                                    string question = "How Many Would you like to add to your cart? (MAX:10)";
+                                                    DisplayDeadCenter(' ', question);
+                                                    Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
+                                                    if (int.TryParse(Console.ReadLine(), out fourthActionIndex))
+                                                    {
+                                                        if (fourthActionIndex >= 1 && fourthActionIndex <= 10)
+                                                        {
+                                                            AddToCart(fourthActionIndex, Menu[selectedFood]);
+                                                            confirmationText = $"{Menu[selectedFood].Name} has been added to your cart {fourthActionIndex} times! Your cart now has {Cart.Count} items!";
+                                                            DisplayDeadCenter(' ', confirmationText);
+                                                            DisplayDeadCenter(' ', exitText);
+                                                            Console.Write(new string(' ', menuDeadCenterLength));
+                                                            Console.ReadKey();
+                                                            return;
+                                                        }
+                                                        else if (fourthActionIndex > 10)
+                                                        {
+                                                            Console.WriteLine("Sorry you can only add 10 items at a time! Thank You!");
+                                                            Console.WriteLine("Press any key to continue!");
+                                                            Console.ReadKey();
+                                                            Console.Clear();
+                                                            continue;
+                                                        }
+                                                        else
+                                                        {
+                                                            Console.WriteLine("Operation failed! Can't add 0 or less objects to the cart!");
+                                                            Console.WriteLine("Press any key to continue!");
+                                                            Console.ReadKey();
+                                                            Console.Clear();
+                                                            continue;
+                                                        }
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    OrderFood();
+                                                    break;
+                                            }
+                                            break;
+                                        }
+                                    } while (true);
+                                    break;
+                                case 1:
+                                    //recursive usage of method perhaps?
+                                    OrderFood();
+
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid Input... Please enter a number to choose the desired option.");
+                            Console.WriteLine("Press Any Key To Continue");
+                            Console.ReadKey();
+                            Console.Clear();
+                            continue;
+                        }
+                    } while (true);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid Input... Please enter a number to choose the desired option.");
+                    Console.WriteLine("Press Any Key To Continue");
+                    Console.ReadKey();
+                    Console.Clear();
+                    continue;
+                }
+            } while (true);
+        }
 
         //Throws each menu item into a list based on its category and will separate and display them based on that information
         /// <summary>
@@ -118,20 +323,15 @@ namespace PointOfSaleTerminal.ProductLogic
         public void DisplayProductDetails(Product selectedProduct)
         {
 
-            string itemName = $"{selectedProduct.Name} ";
-            string itemIndex = $"{Menu.IndexOf(selectedProduct) + 1}. ";
+            string itemName = $"{Menu.IndexOf(selectedProduct) + 1}. {selectedProduct.Name} ";
             string itemPrice = $"{selectedProduct.Price:c} ";
             string itemDescription = $"{selectedProduct.Description}";
-            int offset = -1;
 
-            Console.WriteLine(new string('-', menuMaxLength));
-            offset = (itemIndex.Length + itemName.Length) / 2;
-            Console.WriteLine(new string(' ', menuDeadCenterLength - offset) + $"{itemIndex}{itemName}" + new string(' ', menuDeadCenterLength - offset));
-            offset = (itemDescription.Length / 2);
+            DisplayMax('-');
+            DisplayDeadCenter(' ', itemName);
             Console.WriteLine(new string(' ', menuQuarterCenterLength) + new string('-', menuDeadCenterLength) + new string(' ', menuQuarterCenterLength));
-            Console.WriteLine(new string(' ', menuDeadCenterLength - offset) + $"{itemDescription}" + new string(' ', menuDeadCenterLength - offset));
-            offset = itemPrice.Length / 2;
-            Console.WriteLine(new string(' ', menuDeadCenterLength - offset) + $"{itemPrice}" + new string(' ', menuDeadCenterLength - offset));
+            DisplayDeadCenter(' ', itemDescription);
+            DisplayDeadCenter(' ', itemPrice);
         }
 
 
@@ -147,18 +347,9 @@ namespace PointOfSaleTerminal.ProductLogic
         /// </summary>
         public void DisplayMenu()
         {
-            //Will be used to assign a number to each menu item
-            //int menuItemValue = -1;
-            int nameSpaceOffset = -1;
             string itemName = "";
-            //index values
-            int indexSpaceOffset = -1;
             string itemIndex = "";
-            //TOBEIMPLEMENTED 
             string itemPrice = "";
-            int priceSpaceOffset = -1;
-            //OFFSET USED TO DESIGNATE THE AMOUNT OF SPACE TAKEN UP BETWEEN ALL RELEVANT VALUES
-            int totalContentOffset;
             string[] categoryNames = new string[]
             {
                 $"{(Category)0}s",
@@ -201,15 +392,14 @@ namespace PointOfSaleTerminal.ProductLogic
                 }
             }
             //look how to express repeated chars using Console witchery
-            Console.WriteLine(new string('-', menuMaxLength));
+            DisplayMax('-');
             //test value with magic value 
             //TODO Change length values to include const values and math that would take into account of variable lengths for each thing. e.g: change "4C Menu" to store name.
             //Add logic to take into account the store name being odd vs even. As well as all of the other name dependent cw calls.
-            Console.Write(new string(' ', menuDeadCenterLength - StoreName.Length / 2) + $"{StoreName}" + new string(' ', menuDeadCenterLength - StoreName.Length / 2) + "\n\r");
-
-            Console.Write(new string('-', menuQuarterCenterLength - categoryNames[0].Length / 2) + $"{categoryNames[0]}" + new string('-', menuQuarterCenterLength - categoryNames[0].Length / 2));
-            Console.WriteLine(new string('-', menuQuarterCenterLength - categoryNames[1].Length / 2) + $"{categoryNames[1]}" + new string('-', menuQuarterCenterLength - categoryNames[1].Length / 2));
-            Console.WriteLine(new string(' ', menuMaxLength));
+            DisplayDeadCenter(' ', StoreName);
+            DisplayQuarterCenter('-', categoryNames[0]);
+            DisplayQuarterCenter('-', categoryNames[1], true);
+            DisplayMax(' ');
             if (entrees.Count > sides.Count)
             {
                 higherCount = entrees.Count;
@@ -229,30 +419,28 @@ namespace PointOfSaleTerminal.ProductLogic
                     try
                     {
                         itemName = $"{entrees[i].Name} ";
-
                         itemIndex = $"{Menu.IndexOf(entrees[i]) + 1}. ";
-
                         itemPrice = $"{entrees[i].Price:c} ";
 
                         string completeString = $"{itemIndex}{itemName}- {itemPrice}";
-                        totalContentOffset = completeString.Length / 2;
-                        Console.Write(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
+                        DisplayQuarterCenter(' ', completeString);
                     }
                     catch (IndexOutOfRangeException)
+                    {
+                        Console.WriteLine(new string(' ', menuDeadCenterLength));
+                    }
+                    catch (ArgumentOutOfRangeException)
                     {
                         Console.WriteLine(new string(' ', menuDeadCenterLength));
                     }
                     try
                     {
                         itemName = $"{sides[i].Name} ";
-
                         itemIndex = $"{Menu.IndexOf(sides[i]) + 1}. ";
-
                         itemPrice = $"{sides[i].Price:c} ";
 
                         string completeString = $"{itemIndex}{itemName}- {itemPrice}";
-                        totalContentOffset = completeString.Length / 2;
-                        Console.WriteLine(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
+                        DisplayQuarterCenter(' ', completeString, true);
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -271,11 +459,10 @@ namespace PointOfSaleTerminal.ProductLogic
                 if (valueItems.Count >= 1)
                 {
 
-                    Console.WriteLine(new string('-', menuDeadCenterLength - categoryNames[2].Length / 2) + $"{categoryNames[2]}" + new string('-', menuDeadCenterLength - categoryNames[2].Length / 2));
+                    DisplayDeadCenter('-', categoryNames[2]);
                     Console.WriteLine(new string(' ', menuDeadCenterLength));
                     for (int i = 0; i < valueItems.Count; i++)
                     {
-                        nameSpaceOffset = -1;
                         try
                         {
                             itemName = $"{valueItems[i].Name} ";
@@ -285,8 +472,7 @@ namespace PointOfSaleTerminal.ProductLogic
                             itemPrice = $"{valueItems[i].Price:c} ";
 
                             string completeString = $"{itemIndex}{itemName}- {itemPrice}";
-                            totalContentOffset = completeString.Length / 2;
-                            Console.WriteLine(new string(' ', (menuDeadCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuDeadCenterLength - totalContentOffset)));
+                            DisplayDeadCenter(' ', completeString);
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -298,8 +484,8 @@ namespace PointOfSaleTerminal.ProductLogic
 
 
 
-                Console.Write(new string('-', menuQuarterCenterLength - categoryNames[3].Length / 2) + $"{categoryNames[3]}" + new string('-', menuQuarterCenterLength - categoryNames[2].Length / 2));
-                Console.WriteLine(new string('-', menuQuarterCenterLength - categoryNames[4].Length / 2) + $"{categoryNames[4]}" + new string('-', menuQuarterCenterLength - categoryNames[3].Length / 2));
+                DisplayQuarterCenter('-', categoryNames[3]);
+                DisplayQuarterCenter('-', categoryNames[4], true);
                 if (beverages.Count > desserts.Count)
                 {
                     higherCount = beverages.Count;
@@ -325,8 +511,7 @@ namespace PointOfSaleTerminal.ProductLogic
                             itemPrice = $"{beverages[i].Price:c} ";
 
                             string completeString = $"{itemIndex}{itemName}- {itemPrice}";
-                            totalContentOffset = completeString.Length / 2;
-                            Console.Write(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
+                            DisplayQuarterCenter(' ', completeString);
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -341,8 +526,7 @@ namespace PointOfSaleTerminal.ProductLogic
                             itemPrice = $"{desserts[i].Price:c} ";
 
                             string completeString = $"{itemIndex}{itemName}- {itemPrice}";
-                            totalContentOffset = completeString.Length / 2;
-                            Console.WriteLine(new string(' ', (menuQuarterCenterLength - totalContentOffset)) + $"{completeString}" + new string(' ', (menuQuarterCenterLength - totalContentOffset)));
+                            DisplayQuarterCenter(' ', completeString, true);
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -467,6 +651,62 @@ namespace PointOfSaleTerminal.ProductLogic
             if (Menu.Count >= 1) { return true; }
             return false;
         }
+
+        /// <summary>
+        /// Console.WriteLine()s a new string and repeats the character to be tallied by the StoreFront.menuMaxLength
+        /// </summary>
+        /// <param name="characterTally">the character that will be repeated in a new string</param>
+        static public void DisplayMax(char characterTally)
+        {
+            Console.WriteLine(new string(characterTally, StoreFront.menuMaxLength));
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characterTally"></param>
+        /// <param name="contentString"></param>
+        static public void DisplayDeadCenter(char characterTally, string contentString)
+        {
+            int offset = contentString.Length / 2;
+            Console.WriteLine(new string(characterTally, StoreFront.menuDeadCenterLength - offset) + $"{contentString}" + new string(characterTally, StoreFront.menuDeadCenterLength - offset));
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characterTally"></param>
+        /// <param name="contentStringOne"></param>
+        /// <param name="contentStringTwo"></param>
+        static public void DisplayQuarterCenter(char characterTally, string contentStringOne, string contentStringTwo)
+        {
+            int offset = contentStringOne.Length / 2;
+            Console.Write(new string(characterTally, StoreFront.menuQuarterCenterLength - offset) + $"{contentStringOne}" + new string(characterTally, StoreFront.menuQuarterCenterLength - offset));
+            offset = contentStringTwo.Length / 2;
+            Console.WriteLine(new string(characterTally, StoreFront.menuQuarterCenterLength - offset) + $"{contentStringTwo}" + new string(characterTally, StoreFront.menuQuarterCenterLength - offset));
+        }
+        /// <summary>
+        /// offset is equal to contentString.Length / 2; will be removed from menuQuarterCenterLength - offset and then
+        /// Console.Write's a string using a new string(characterTally, StoreFront.menuQuarterCenterLength) - offset cocentated w/ contentString
+        /// </summary>
+        /// <param name="characterTally">the character that will be repeated x-offset amount of times</param>
+        /// <param name="contentString">the character that will be displayed center quarter of the menu</param>
+        static public void DisplayQuarterCenter(char characterTally, string contentString)
+        {
+            int offset = contentString.Length / 2;
+            Console.Write(new string(characterTally, StoreFront.menuQuarterCenterLength - offset) + $"{contentString}" + new string(characterTally, StoreFront.menuQuarterCenterLength - offset));
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characterTally"></param>
+        /// <param name="contentString"></param>
+        /// <param name="isNewLine"></param>
+        static public void DisplayQuarterCenter(char characterTally, string contentString, bool isNewLine)
+        {
+            int offset = contentString.Length / 2;
+            Console.Write(new string(characterTally, StoreFront.menuQuarterCenterLength - offset) + $"{contentString}" + new string(characterTally, StoreFront.menuQuarterCenterLength - offset) + (isNewLine ? "\n" : ""));
+
+        }
+
 
 
 
