@@ -24,6 +24,7 @@ Optional enhancements:
 
 using Microsoft.Win32.SafeHandles;
 using PointOfSaleTerminal.ProductLogic;
+using PointOfSaleTerminal.StoreLogic;
 using System.Diagnostics.Contracts;
 using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
@@ -67,18 +68,19 @@ List<Product> defaultMenu = new List<Product>()
     //DESSERTS
     new Product("Chicken Flavoureed Ice Cream",4,"Honestly really gross, but it's on theme and for some reason it sells okay",2.19m),
     new Product("Vanilla Chip Chocolate Ice Cream",4,"refreshing with a rich and delicious taste",3.49m),
-    new Product("Strawberry Cheesecake",4,$"Strawberry cheesecake prepared by hand in-house and served fresh every day {9.99:c}/full cake(8 slices) ",1.49m),
+    new Product("Strawberry Cheesecake",4,$"Strawberry cheesecake prepared by hand in-house and served fresh every day {9.99m:c}/full cake(8 slices) ",1.49m),
     new Product("Vanilla Milkshake",4,"A milkshake made w/ real vanilla and Whole Milk",2.49m),
     new Product("Banana Milkshake",4,"A milkshake made w/ real vanilla, bananas and Whole Milk",2.49m),
 };
 StoreFront chelseasChickenStore = new StoreFront("Chelsea's Comically Collosal Chicken");
 
-string[] consoleMenuOptions = new string[4]
+string[] consoleMenuOptions = new string[5]
 {
     "Order Food",
     "Display Cart",
     "Empty Cart",
     "Check Out",
+    "Exit The Application",
 };
 const int adminCode = 958627;
 
@@ -107,14 +109,16 @@ catch (FileNotFoundException)
 
 }
 
-
+bool isContinuing = true;
 //One of a few nav screens intended (Admin, Edit(edit menu items), Menu/Customer,)
-while (true)
+do
 {
     
     Console.Clear();
     ConsoleMenuNavigation();
-};
+    Console.Clear();
+
+}while(isContinuing);
 /* test method
 Console.WriteLine($"{doubleChickenMeal.ToString()}");
 */
@@ -144,7 +148,6 @@ void ConsoleMenuNavigation()
 
     while (true)
     {
-        bool validMenuOption = false;
         string consoleMenuPrompt = "Enter the number for the console menu option: ";
         StoreFront.DisplayDeadCenter(' ', consoleMenuPrompt);
         for (int i = 0; i < consoleMenuOptions.Length; i++)
@@ -153,7 +156,7 @@ void ConsoleMenuNavigation()
             StoreFront.DisplayDeadCenter(' ', menuOption);
         }
         StoreFront.DisplayMax('-');
-        Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
+        Console.Write(new string(' ', StoreFront.menuHalfCenterLength));
         if (int.TryParse(Console.ReadLine(), out int selectedMenuOption))
         {
             Console.Clear();
@@ -198,6 +201,9 @@ void ConsoleMenuNavigation()
                 case 4: //Checking out
                     chelseasChickenStore.CheckOut();
                     break;
+                case 5:
+                    isContinuing = false;
+                    break;
                 case adminCode:
                     AdminMenu();
                     break;
@@ -228,7 +234,7 @@ string AnswerYOrN()
         string prompt = "Answer \"y\" or \"n\"";
         StoreFront.DisplayDeadCenter(' ', prompt);
         StoreFront.DisplayMax('-');
-        Console.Write(new string(' ', StoreFront.menuDeadCenterLength));
+        Console.Write(new string(' ', StoreFront.menuHalfCenterLength));
         string answer = Console.ReadLine().ToLower();
 
         switch (answer)

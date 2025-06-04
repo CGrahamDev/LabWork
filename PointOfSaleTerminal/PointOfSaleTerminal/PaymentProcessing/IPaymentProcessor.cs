@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace PointOfSaleTerminal.IPaymentProcessing
 {
-    internal interface IPaymentProcessor
+    public interface IPaymentProcessor
     {
+        public void Pay();
+                 
+        public decimal GetBalance();
     }
 }
