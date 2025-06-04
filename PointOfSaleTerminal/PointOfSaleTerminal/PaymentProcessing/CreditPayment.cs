@@ -12,7 +12,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
     {
         public string CardNumber { get; private set; } //12 char length min string 17 max. Must return true using int.TryParse
         public DateTime ExpirationDate { get; set; }
-        public string Pin { get; private set; } //3 char length. Must return true using int.TryParse
+        public string CVV { get; private set; } //3 char length. Must return true using int.TryParse
         public decimal Balance { get; set; }
         public decimal Cost { get; set; }
         public static DateTime CurrentDate = DateTime.Today;
@@ -22,7 +22,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
         {
             CardNumber =  cardNumber;
             ExpirationDate = expirationDate;
-            Pin = pin;
+            CVV = pin;
             if (ValidateCardInfo() == false)
             {
                 throw new ArgumentException("Card Info is Invalid");
@@ -33,7 +33,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
         {
             CardNumber = cardNumber;
             ExpirationDate = expirationDate;
-            Pin = pin;
+            CVV = pin;
             if (ValidateCardInfo() == false)
             {
                 throw new ArgumentException("Card Info is Invalid");
@@ -53,10 +53,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
                 throw new Exception("Insufficient Funds. Balance cannot be less than the tendered amount");
             }
         }
-        public decimal GetBalance()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         private bool ValidateCardInfo()
         {
@@ -104,7 +101,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
         }
         private bool ValidatePinNumber()
         {
-            if ((Pin.Length == 3) && int.TryParse(CardNumber, out _))
+            if ((CVV.Length == 3) && int.TryParse(CardNumber, out _))
             {
                 return true;
             }

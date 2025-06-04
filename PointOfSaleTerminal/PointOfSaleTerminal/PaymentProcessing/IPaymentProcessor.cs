@@ -9,7 +9,7 @@ namespace PointOfSaleTerminal.IPaymentProcessing
     public interface IPaymentProcessor
     {
         public void Pay();
-                 
-        public decimal GetBalance();
+
+
     }
 }

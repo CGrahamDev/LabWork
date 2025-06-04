@@ -44,10 +44,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
                 throw new Exception("Insufficient Funds. Balance cannot be less than the tendered amount");
             }
         }
-        public decimal GetBalance() 
-        {
-            return this.Balance;
-        }
+        
 
         public void Pay()
         {
