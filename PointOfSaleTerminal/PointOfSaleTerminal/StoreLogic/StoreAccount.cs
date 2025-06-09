@@ -14,9 +14,20 @@ namespace PointOfSaleTerminal.StoreLogic
         public override int AccountNumber { get; set; }
         public override int RoutingNumber { get; set; }
         new public decimal Balance { get; private set; }
+        //maybe redo as a Dictionary<DateTime, Dictionary<List<Product>, >>
         public Dictionary<DateTime, List<Product>> Statements { get; set; }
 
 
+        public StoreAccount(string name)
+        {
+            decimal corporatePackage = 15_000m;
+            Random random = new Random();
+            Name = name;
+            AccountNumber = random.Next(0_000_000_000, 2_147_483_647);
+            RoutingNumber = random.Next(0_000_000_000, 2_147_483_647);
+            Balance = corporatePackage;
+            Statements = new Dictionary<DateTime, List<Product>>();
+        }
         public StoreAccount(string name, decimal initalBalance)
         {
             Random random = new Random();   

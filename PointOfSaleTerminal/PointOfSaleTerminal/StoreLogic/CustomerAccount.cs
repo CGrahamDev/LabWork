@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PointOfSaleTerminal.PaymentProcessing;
-using PointOfSaleTerminal.StoreLogic;
 
 namespace PointOfSaleTerminal.StoreLogic
 {
@@ -16,9 +15,9 @@ namespace PointOfSaleTerminal.StoreLogic
         public override int AccountNumber { get; set; }
         public CashPayment Cash {  get; set; }
         public CreditPayment Credit { get; set; }
+        public CheckPayment Check { get; set; }
 
-
-
+        //Cash
         /// <summary>
         /// Constructor for making a cash payment
         /// </summary>
@@ -28,8 +27,8 @@ namespace PointOfSaleTerminal.StoreLogic
         public CustomerAccount(decimal amountTendered, decimal itemCost, decimal paymentTarget)
         {
             Cash = new CashPayment(amountTendered, itemCost, paymentTarget);
-
         }
+        //CREDIT
         /// <summary>
         /// Constructor for one time cash payment
         /// </summary>
@@ -42,6 +41,7 @@ namespace PointOfSaleTerminal.StoreLogic
         public CustomerAccount(string cardNumber, DateTime expirationDate, string pin, decimal balance, decimal cost, decimal paymentTarget)
         {
             Credit = new CreditPayment(cardNumber, expirationDate, pin, balance, cost, paymentTarget);
+            Balance = Credit.Balance;
         }
         public CustomerAccount(string name, string cardNumber, DateTime expirationDate, string pin, decimal balance)
         {
@@ -52,6 +52,16 @@ namespace PointOfSaleTerminal.StoreLogic
             Credit = new CreditPayment(cardNumber, expirationDate, pin, balance);
             Balance = Credit.Balance;
         }
+        //CHECK
+        public CustomerAccount(string name,string checkNumber, decimal cost, decimal paymentTarget)
+        {
+            Random random = new Random();
+            AccountNumber = random.Next(0_000_000_000, 2_147_483_647);
+            RoutingNumber = random.Next(0_000_000_000, 2_147_483_647);
+            Check = new CheckPayment(checkNumber, cost, paymentTarget);
+            Balance -= cost;
+        }
+
 
         public override void ReceiveFunds(decimal transferAmount)
         {
@@ -71,7 +81,6 @@ namespace PointOfSaleTerminal.StoreLogic
             {
                 Balance -= transferAmount;
                 targetAccount.ReceiveFunds(transferAmount);
-
             }
             else if (transferAmount <= 0)
             {

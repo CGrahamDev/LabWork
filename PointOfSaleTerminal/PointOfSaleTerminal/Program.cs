@@ -113,12 +113,10 @@ bool isContinuing = true;
 //One of a few nav screens intended (Admin, Edit(edit menu items), Menu/Customer,)
 do
 {
-    
-    Console.Clear();
     ConsoleMenuNavigation();
     Console.Clear();
-
-}while(isContinuing);
+    Console.WriteLine("\x1b[3J");
+} while(isContinuing);
 /* test method
 Console.WriteLine($"{doubleChickenMeal.ToString()}");
 */
@@ -143,20 +141,20 @@ void ConsoleMenuNavigation()
     string prompt = "";
     StoreFront.DisplayMax('-');
     string storeWelcome = "Welcome to Chelsea's Comically Collossal Chicken";
-    StoreFront.DisplayDeadCenter(' ', storeWelcome);
+    StoreFront.DisplayCenter(' ', storeWelcome);
     StoreFront.DisplayMax('-');
 
     while (true)
     {
         string consoleMenuPrompt = "Enter the number for the console menu option: ";
-        StoreFront.DisplayDeadCenter(' ', consoleMenuPrompt);
+        StoreFront.DisplayCenter(' ', consoleMenuPrompt);
         for (int i = 0; i < consoleMenuOptions.Length; i++)
         {
             string menuOption = $"{i + 1}: {consoleMenuOptions[i]} ";
-            StoreFront.DisplayDeadCenter(' ', menuOption);
+            StoreFront.DisplayCenter(' ', menuOption);
         }
         StoreFront.DisplayMax('-');
-        Console.Write(new string(' ', StoreFront.menuHalfCenterLength));
+        Console.Write(new string(' ', StoreFront.MenuHalfCenterLength));
         if (int.TryParse(Console.ReadLine(), out int selectedMenuOption))
         {
             Console.Clear();
@@ -183,11 +181,15 @@ void ConsoleMenuNavigation()
                     break;
                 case 2: // displaying cart 
                     chelseasChickenStore.DisplayCart();
+                    StoreFront.DisplayMax('-');
+                    StoreFront.DisplayCenter(' ', "Press any key to continue");
+                    StoreFront.DisplayHalfCenter(' ', "", false);
+                    Console.ReadLine();
                     break;
                 case 3: //Cart clearing
                     prompt = "Are you sure? This will empty your cart!";
                     StoreFront.DisplayMax('-');
-                    StoreFront.DisplayDeadCenter(' ', prompt);
+                    StoreFront.DisplayCenter(' ', prompt);
                     string userAnswer = AnswerYOrN();
                     if (userAnswer == "y")
                     {
@@ -232,9 +234,9 @@ string AnswerYOrN()
         int i = 0;
         StoreFront.DisplayMax('-');
         string prompt = "Answer \"y\" or \"n\"";
-        StoreFront.DisplayDeadCenter(' ', prompt);
+        StoreFront.DisplayCenter(' ', prompt);
         StoreFront.DisplayMax('-');
-        Console.Write(new string(' ', StoreFront.menuHalfCenterLength));
+        Console.Write(new string(' ', StoreFront.MenuHalfCenterLength));
         string answer = Console.ReadLine().ToLower();
 
         switch (answer)

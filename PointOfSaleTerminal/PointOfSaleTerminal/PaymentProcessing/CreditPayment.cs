@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using PointOfSaleTerminal.IPaymentProcessing;
+﻿using PointOfSaleTerminal.IPaymentProcessing;
 
 namespace PointOfSaleTerminal.PaymentProcessing
 {
@@ -18,23 +12,22 @@ namespace PointOfSaleTerminal.PaymentProcessing
         public static DateTime CurrentDate = DateTime.Today;
 
 
-        public CreditPayment(string cardNumber, DateTime expirationDate, string pin, decimal balance)
+        public CreditPayment(string cardNumber, DateTime expirationDate, string cvv, decimal balance)
         {
             CardNumber =  cardNumber;
             ExpirationDate = expirationDate;
-            CVV = pin;
-            if (ValidateCardInfo() == false)
+            CVV = cvv;
+            if (ValidateCardInfo(cardNumber, expirationDate, cvv) == false)
             {
                 throw new ArgumentException("Card Info is Invalid");
-
             }
         }
-        public CreditPayment(string cardNumber, DateTime expirationDate, string pin, decimal balance, decimal cost, decimal paymentTarget)
+        public CreditPayment(string cardNumber, DateTime expirationDate, string cvv, decimal balance, decimal cost, decimal paymentTarget)
         {
             CardNumber = cardNumber;
             ExpirationDate = expirationDate;
-            CVV = pin;
-            if (ValidateCardInfo() == false)
+            CVV = cvv;
+            if (ValidateCardInfo(cardNumber, expirationDate, cvv) == false)
             {
                 throw new ArgumentException("Card Info is Invalid");
             }
@@ -55,15 +48,15 @@ namespace PointOfSaleTerminal.PaymentProcessing
         }
         
 
-        private bool ValidateCardInfo()
+        private bool ValidateCardInfo(string cardNumber, DateTime expirationDate, string cvv)
         {
             bool checkOne = false;
             bool checkTwo = false;
             bool checkThree = false;
 
-            checkOne = ValidateCardNumber();
-            checkTwo = ValidateExpirationDate();
-            checkThree = ValidatePinNumber();
+            checkOne = ValidateCardNumber(cardNumber);
+            checkTwo = ValidateExpirationDate(expirationDate);
+            checkThree = ValidatePinNumber(cvv);
             if (checkOne && checkTwo && checkThree)
             {
                 return true;
@@ -83,26 +76,29 @@ namespace PointOfSaleTerminal.PaymentProcessing
             return false;
         }
 
-        private bool ValidateCardNumber()
+        private bool ValidateCardNumber(string cardNumber)
         {
-            if ((CardNumber.Length >= 12 && CardNumber.Length <= 17) && int.TryParse(CardNumber, out _))
+            if ((cardNumber.Length >= 12 && cardNumber.Length <= 17) && int.TryParse(cardNumber, out _))
             {
+                CardNumber = cardNumber;
                 return true;
             }
             return false;
         }
-        private bool ValidateExpirationDate()
+        private bool ValidateExpirationDate(DateTime expirationDate)
         {
-            if (CurrentDate <= ExpirationDate)
+            if (CurrentDate <= expirationDate)
             {
+                ExpirationDate = expirationDate;
                 return true;
             }
             return false;
         }
-        private bool ValidatePinNumber()
+        private bool ValidatePinNumber(string cvv)
         {
-            if ((CVV.Length == 3) && int.TryParse(CardNumber, out _))
+            if ((cvv.Length == 3) && int.TryParse(cvv, out _))
             {
+                CVV = cvv;
                 return true;
             }
             return false;
