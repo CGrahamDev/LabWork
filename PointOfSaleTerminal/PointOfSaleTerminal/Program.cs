@@ -185,8 +185,15 @@ void ConsoleMenuNavigation()
                     chelseasChickenStore.OrderFood();
                     break;
                 case 2: // displaying cart 
-                    chelseasChickenStore.DisplayCart();
-                    StoreFront.DisplayMax('-');
+                    try
+                    {
+                        chelseasChickenStore.DisplayCart();
+                    }
+                    catch (Exception ex)
+                    {
+                        StoreFront.DisplayCenter(' ',$"{ex.Message}");
+                    }
+                        StoreFront.DisplayMax('-');
                     StoreFront.DisplayCenter(' ', "Press any key to continue");
                     StoreFront.DisplayCenter();
                     Console.ReadKey();

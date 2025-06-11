@@ -500,7 +500,17 @@ namespace PointOfSaleTerminal.StoreLogic
                                     switch (thirdActionIndex)
                                     {
                                         case 0:
-                                            AddToCart(Menu[selectedFood]);
+                                            try
+                                            {
+                                                AddToCart(Menu[selectedFood]);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                DisplayCenter(' ', $"{ex.Message} Press any key to continue;");
+                                                DisplayCenter();
+                                                Console.ReadKey();
+                                                continue;
+                                            }
                                             string confirmationText = $"{Menu[selectedFood].Name} has been added to your cart! Your cart now has {Cart.Count} items!";
                                             DisplayCenter(' ', confirmationText);
                                             DisplayCenter(' ', exitText);
@@ -517,7 +527,17 @@ namespace PointOfSaleTerminal.StoreLogic
                                             {
                                                 if (fourthActionIndex >= 1 && fourthActionIndex <= 10)
                                                 {
-                                                    AddToCart(fourthActionIndex, Menu[selectedFood]);
+                                                    try
+                                                    {
+                                                        AddToCart(fourthActionIndex, Menu[selectedFood]);
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        DisplayCenter(' ', $"{ex.Message} Press any key to continue;");
+                                                        DisplayCenter();
+                                                        Console.ReadKey();
+                                                        continue;
+                                                    }
                                                     confirmationText = $"{Menu[selectedFood].Name} has been added to your cart {fourthActionIndex} times! Your cart now has {Cart.Count} items!";
                                                     DisplayCenter(' ', confirmationText);
                                                     DisplayCenter(' ', exitText);
