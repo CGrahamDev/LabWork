@@ -17,6 +17,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
             CardNumber =  cardNumber;
             ExpirationDate = expirationDate;
             CVV = cvv;
+            Balance = balance;
             if (ValidateCardInfo(cardNumber, expirationDate, cvv) == false)
             {
                 throw new ArgumentException("Card Info is Invalid");
@@ -27,6 +28,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
             CardNumber = cardNumber;
             ExpirationDate = expirationDate;
             CVV = cvv;
+            Balance = balance;
             if (ValidateCardInfo(cardNumber, expirationDate, cvv) == false)
             {
                 throw new ArgumentException("Card Info is Invalid");
@@ -39,7 +41,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
             {
                 paymentTarget += Cost;
                 Balance -= Cost;
-                Console.WriteLine($"Your balance is {Balance:c}");
+                
             }
             else
             {
@@ -78,7 +80,20 @@ namespace PointOfSaleTerminal.PaymentProcessing
 
         private bool ValidateCardNumber(string cardNumber)
         {
-            if ((cardNumber.Length >= 12 && cardNumber.Length <= 17) && int.TryParse(cardNumber, out _))
+            
+            char[] chars = cardNumber.ToCharArray();
+            foreach (char c in chars) {
+                try
+                {
+                    int.Parse(c.ToString());
+                }
+                catch (FormatException) 
+                {
+                    return false;
+                }
+            }
+
+            if ((cardNumber.Length >= 12 && cardNumber.Length <= 17))
             {
                 CardNumber = cardNumber;
                 return true;

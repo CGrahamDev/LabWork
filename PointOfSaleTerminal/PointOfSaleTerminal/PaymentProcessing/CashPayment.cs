@@ -33,7 +33,6 @@ namespace PointOfSaleTerminal.PaymentProcessing
             {
                 paymentTarget += Cost;
                 Balance -= Cost;
-                Console.WriteLine($"Your change is {Balance:c}");
             }
             else
             {

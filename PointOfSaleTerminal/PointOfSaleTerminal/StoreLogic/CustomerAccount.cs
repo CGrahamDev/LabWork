@@ -27,6 +27,7 @@ namespace PointOfSaleTerminal.StoreLogic
         public CustomerAccount(decimal amountTendered, decimal itemCost, decimal paymentTarget)
         {
             Cash = new CashPayment(amountTendered, itemCost, paymentTarget);
+            Balance = Cash.Balance;
         }
         //CREDIT
         /// <summary>
@@ -43,19 +44,20 @@ namespace PointOfSaleTerminal.StoreLogic
             Credit = new CreditPayment(cardNumber, expirationDate, pin, balance, cost, paymentTarget);
             Balance = Credit.Balance;
         }
-        public CustomerAccount(string name, string cardNumber, DateTime expirationDate, string pin, decimal balance)
+        public CustomerAccount(string name, string cardNumber, DateTime expirationDate, string cvv, decimal balance)
         {
             Random random = new Random();
             Name = name;
             AccountNumber = random.Next(0_000_000_000, 2_147_483_647);
             RoutingNumber = random.Next(0_000_000_000, 2_147_483_647);
-            Credit = new CreditPayment(cardNumber, expirationDate, pin, balance);
+            Credit = new CreditPayment(cardNumber, expirationDate, cvv, balance);
             Balance = Credit.Balance;
         }
         //CHECK
         public CustomerAccount(string name,string checkNumber, decimal cost, decimal paymentTarget)
         {
             Random random = new Random();
+            Name = name;
             AccountNumber = random.Next(0_000_000_000, 2_147_483_647);
             RoutingNumber = random.Next(0_000_000_000, 2_147_483_647);
             Check = new CheckPayment(checkNumber, cost, paymentTarget);

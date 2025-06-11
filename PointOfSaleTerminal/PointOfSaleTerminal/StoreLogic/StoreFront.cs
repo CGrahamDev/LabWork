@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -21,6 +22,7 @@ namespace PointOfSaleTerminal.StoreLogic
         //public List<Product> Cart { get; private set; }
         //<Key: Product; int: Count>
         public Dictionary<Product, int> Cart { get; private set; }
+        public decimal CartPrice { get; private set; }
         public List<Product> Menu { get; private set; }
         public string StoreName { get; set; }
         public List<MealDeal> Meals { get; set; }
@@ -29,6 +31,7 @@ namespace PointOfSaleTerminal.StoreLogic
         public const int MenuHalfCenterLength = MenuMaxLength / 2;
         public const int MenuQuarterCenterLength = MenuMaxLength / 4;
         public const int CartItemMax = 10;
+        public int menuCounter { get; set; } = 0;
         internal StoreAccount StoreAccount { get; set; }
 
         //constructor 
@@ -65,8 +68,6 @@ namespace PointOfSaleTerminal.StoreLogic
             {
                 Cart.Add(item, 1);
             }
-
-            //Cart.Add(item);
         }
         public void AddToCart(int quantity, Product item)
         {
@@ -75,7 +76,7 @@ namespace PointOfSaleTerminal.StoreLogic
             {
                 Cart[item] += quantity;
             }
-            else if (Cart.ContainsKey(item) == true && value >= 10)
+            else if (Cart.ContainsKey(item) == true && value + quantity >= 10)
             {
                 throw new ArgumentOutOfRangeException("Quantity cannot be higher than 10 in the cart.");
             }
@@ -99,18 +100,19 @@ namespace PointOfSaleTerminal.StoreLogic
         public void ClearCart()
         {
             Cart.Clear();
+
         }
         public void DisplayCart()
         {
-            decimal price = 0;
+            CartPrice = 0;
             string item = "";
             //add dfuntionality for seperately displaying meal deals and displaying single item products
             //change this so that repeated items arent displayed individually and so that there's a seperate count
             if (Cart.Count >= 1)
             {
-                DisplayMax('-');
+                DisplayMax('=');
                 DisplayCenter(' ', "Cart ");
-                DisplayMax('-');
+                DisplayMax('=');
                 foreach (KeyValuePair<Product, int> productToQuantity in Cart)
                 {
                     if (productToQuantity.Value > 1)
@@ -118,7 +120,7 @@ namespace PointOfSaleTerminal.StoreLogic
                         string itemNameAndIndex = $"{Menu.IndexOf(productToQuantity.Key) + 1}. {productToQuantity.Key.Name} ";
                         string itemPrice = $"{productToQuantity.Key.Price:c} ";
                         string itemTotalPrice = $"{(productToQuantity.Key.Price * productToQuantity.Value):c} ";
-                        price += productToQuantity.Key.Price * productToQuantity.Value;
+                        CartPrice += productToQuantity.Key.Price * productToQuantity.Value;
                         DisplayCenter(' ', $"{itemNameAndIndex}{itemPrice} - x{productToQuantity.Value}");
 
                         Console.WriteLine(new string(' ', MenuQuarterCenterLength) + new string('-', MenuHalfCenterLength) + new string(' ', MenuQuarterCenterLength));
@@ -131,7 +133,7 @@ namespace PointOfSaleTerminal.StoreLogic
                     {
                         string itemNameAndIndex = $"{Menu.IndexOf(productToQuantity.Key) + 1}. {productToQuantity.Key.Name} ";
                         string itemPrice = $"{productToQuantity.Key.Price:c} ";
-                        price += productToQuantity.Key.Price * productToQuantity.Value;
+                        CartPrice += productToQuantity.Key.Price * productToQuantity.Value;
                         DisplayCenter(' ', $"{itemNameAndIndex}{itemPrice} - x{productToQuantity.Value}");
                         DisplayMax('-');
                     }
@@ -140,7 +142,10 @@ namespace PointOfSaleTerminal.StoreLogic
                         throw new NotImplementedException();
                     }
                 }
-                DisplayCenter(' ', $"Total Price: {price:c}");
+                DisplayHalfCenter(' ', $"Price: {CartPrice:c}");
+                DisplayHalfCenter(' ', $"Tax: {(CartPrice * 0.06m):c}", true);
+                CartPrice *= 1.06m;
+                DisplayCenter(' ', $"Total Price: {CartPrice:c}");
 
             }
             else
@@ -156,7 +161,45 @@ namespace PointOfSaleTerminal.StoreLogic
         }
         public void DisplayReceipt()
         {
-            throw new NotImplementedException();
+            CartPrice = 0;
+            string item = "";
+            //add dfuntionality for seperately displaying meal deals and displaying single item products
+            //change this so that repeated items arent displayed individually and so that there's a seperate count
+            if (Cart.Count >= 1)
+            {
+                DisplayMax('=');
+                DisplayCenter(' ', "Receipt");
+                DisplayMax('=');
+                foreach (KeyValuePair<Product, int> productToQuantity in Cart)
+                {
+                    if (productToQuantity.Value > 0)
+                    {
+
+                        string itemNameAndIndex = $"{Menu.IndexOf(productToQuantity.Key) + 1}. {productToQuantity.Key.Name} ";
+                        string itemPrice = $"{productToQuantity.Key.Price:c} ";
+                        string itemTotalPrice = $"{(productToQuantity.Key.Price * productToQuantity.Value):c} ";
+                        CartPrice += productToQuantity.Key.Price * productToQuantity.Value;
+                        for (int i = 0; i < productToQuantity.Value; i++)
+                        {
+                            DisplayCenter(' ', $"{itemPrice} | {itemNameAndIndex}");
+                            Console.WriteLine(new string(' ', MenuQuarterCenterLength) + new string('-', MenuHalfCenterLength) + new string(' ', MenuQuarterCenterLength));
+                        }
+                       
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+                DisplayMax('-');
+                Console.WriteLine(new string(' ', MenuQuarterCenterLength) + new string('-', MenuHalfCenterLength) + new string(' ', MenuQuarterCenterLength));
+                DisplayHalfCenter(' ', $"Price: {CartPrice:c}");
+                DisplayHalfCenter(' ', $"Tax: {(CartPrice * 0.06m):c}", true);
+                CartPrice *= 1.06m;
+                DisplayCenter(' ', $"Total Price: {CartPrice:c}");
+
+
+            }
         }
         public void CheckOut()
         {
@@ -166,16 +209,16 @@ namespace PointOfSaleTerminal.StoreLogic
                 "[3] Check ",
                 "[4] Return ",
             };
-            
-            while (true) 
+
+            while (true)
             {
-                DisplayMax('-');
-                DisplayCart();
-                DisplayMax('-');
+
                 //DISPLAYS THE CART THEN ASKS THE USER FOR ACTIONS (CHECKOUT/REMOVE FROM CART/)
                 try
                 {
+                    DisplayMax('=');
                     DisplayCart();
+                    DisplayMax('=');
                 }
                 catch (NullReferenceException)
                 {
@@ -203,7 +246,7 @@ namespace PointOfSaleTerminal.StoreLogic
                 {
                     try
                     {
-                        _ = checkOutOptions[firstInput-1];    
+                        _ = checkOutOptions[firstInput - 1];
                     }
                     catch (ArgumentOutOfRangeException)
                     {
@@ -211,7 +254,105 @@ namespace PointOfSaleTerminal.StoreLogic
                         DisplayCenter(' ', "Input is out of range of selected inputs");
                         Console.Clear();
                         Console.WriteLine("\x1b[3J");
-                        CheckOut();
+                        continue;
+                    }
+                    while (true)
+                    {
+                        switch (firstInput)
+                        {
+                            case 1:
+                                DisplayMax('-');
+                                DisplayCenter(' ', $"Your amount owed is {CartPrice:c}. How much do you tender?");
+                                DisplayCenter();
+                                if (decimal.TryParse(Console.ReadLine(), out decimal tenderedAmount))
+                                {
+                                    CustomerAccount cashCustomer = new CustomerAccount(tenderedAmount, CartPrice, StoreAccount.Balance);
+                                    Console.Clear();
+                                    Console.WriteLine("\x1b[3J");
+                                    DisplayReceipt();
+                                    DisplayCenter(' ', $"Payemnt successful. Your Balance is {cashCustomer.Balance:c} Press any key to continue");
+                                    DisplayCenter();
+                                    Console.ReadKey();
+                                }
+                                else
+                                {
+                                    DisplayMax('-');
+                                    DisplayCenter(' ', "Invalid input, please enter a number amount for your payment. Press any key to continue:");
+                                    DisplayCenter();
+                                    Console.ReadLine();
+                                    Console.Clear();
+                                    Console.WriteLine("\x1b[3J");
+                                }
+                                break;
+                            case 2:
+                                do
+                                {
+                                    decimal prePaymentBalance = StoreAccount.Balance;
+                                    DisplayMax('-');
+                                    DisplayCenter(' ', $"Your amount owed is {CartPrice:c}. Enter your card number: ");
+                                    DisplayCenter();
+                                    string cardNumber = Console.ReadLine();
+                                    DisplayCenter(' ', $"Enter your expiration date: ");
+                                    DisplayCenter();
+                                    DateTime expiration = DateTime.Parse(Console.ReadLine());
+                                    DisplayCenter(' ', $"Enter your CVV");
+                                    DisplayCenter();
+                                    string cvv = Console.ReadLine();
+                                    try
+                                    {
+                                        CustomerAccount account = new CustomerAccount(cardNumber, expiration, cvv, new Random().Next(25, 300), CartPrice, StoreAccount.Balance);
+                                        Console.Clear();
+                                        Console.WriteLine("\x1b[3J");
+                                        DisplayReceipt();
+                                        DisplayCenter(' ', "Payemnt successful. Press any key to continue");
+                                        DisplayCenter(' ', $"Your balance is {account.Balance:c}");
+                                        DisplayCenter();
+                                        Console.ReadKey();
+                                        break;
+                                    }
+                                    catch (Exception)
+                                    {
+                                        DisplayMax('-');
+                                        DisplayCenter(' ', "Payment failed. Press any key to continue:");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        Console.WriteLine("\x1b[3J");
+                                        continue;
+                                    }
+                                } while (true);
+                                break;
+                            case 3:
+                                DisplayMax('-');
+                                DisplayCenter(' ', "Enter your name:");
+                                string name = Console.ReadLine().Trim();
+                                DisplayMax('-');
+                                DisplayCenter(' ', "Enter your check number:");
+                                string checkNumber = Console.ReadLine().Trim();
+                                try
+                                {
+                                    CustomerAccount checkPayment = new CustomerAccount(name, checkNumber, CartPrice, StoreAccount.Balance);
+                                    Console.Clear();
+                                    Console.WriteLine("\x1b[3J");
+                                    DisplayReceipt();
+                                    DisplayCenter(' ', "Payemnt successful. Press any key to continue");
+
+                                    DisplayCenter();
+                                    Console.ReadKey();
+                                }
+                                catch (Exception)
+                                {
+                                    DisplayMax('-');
+                                    DisplayCenter(' ', "Payment failed. Press any key to continue:");
+                                    Console.ReadKey();
+                                    Console.Clear();
+                                    Console.WriteLine("\x1b[3J");
+                                    continue;
+                                }
+                                break;
+                            case 4:
+                                return;
+                        }
+                        break;
                     }
                 }
                 else
@@ -224,8 +365,8 @@ namespace PointOfSaleTerminal.StoreLogic
                 
                 break;
             }
-           
-            throw new NotImplementedException();    
+
+            
         }
 
 
@@ -236,203 +377,184 @@ namespace PointOfSaleTerminal.StoreLogic
         public void OrderFood()
         {
             int selectedFood = -1;
-
+            bool repeatSecondActionPrompt = false;
+            bool repeatThirdActionPrompt = false;
+            
+ 
             bool isValidNumber = false;
             string introText = "Enter a number to select the desired menu item";
             string exitText = "Press any key to continue:";
             do
             {
-                //will call the menu display and will give options of selection and purchase;
-                DisplayMenu();
-                //Will display each menu item in the menu List and assign a number it can be selected by. Will then offer the user to add to cart (by quantity) or return to the menu
-                DisplayMax('-');
-                DisplayCenter(' ', introText);
-                DisplayMax('-');
-                Console.Write(new string(' ', MenuHalfCenterLength));
-                if (isValidNumber = int.TryParse(Console.ReadLine(), out selectedFood))
+                do
                 {
-                    selectedFood -= 1;
-                    try
+                    //will call the menu display and will give options of selection and purchase;
+                    DisplayMenu();
+                    //Will display each menu item in the menu List and assign a number it can be selected by. Will then offer the user to add to cart (by quantity) or return to the menu
+                    DisplayMax('=');
+                    DisplayCenter(' ', introText);
+                    DisplayMax('=');
+                    DisplayCenter();
+                    if (isValidNumber = int.TryParse(Console.ReadLine(), out selectedFood))
                     {
-                        //potentially rewrite this method to use selectedProduct more prominently in leiu of the indexer, selectedFood
-                        Product selectedProduct = Menu[selectedFood];
-                    }
-                    catch (ArgumentOutOfRangeException)
-                    {
-                        Console.WriteLine($"Argument out of range. Please enter a number 1-{Menu.Count}");
-                        Console.WriteLine("Press any key to continue!");
-                        Console.ReadKey();
-                        Console.Clear();
-                        Console.WriteLine("\x1b[3J");
-                        continue;
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Console.WriteLine($"Index out of range. Please enter a number 1-{Menu.Count}");
-                        Console.WriteLine("Press any key to continue!");
-                        Console.ReadKey();
-                        Console.Clear();
-                        Console.WriteLine("\x1b[3J");
-                        continue;
-                    }
-                    Console.Clear();
-                    Console.WriteLine("\x1b[3J");
-
-                    do
-                    {
-                        SelectMenuItems(selectedFood);
-                        string cartActionString = $"[1] Add To Cart ";
-                        string returnActionString = $"[2] Return To Menu ";
-                        string[] secondaryMenuActions =
+                        selectedFood -= 1;
+                        try
                         {
+                            //potentially rewrite this method to use selectedProduct more prominently in leiu of the indexer, selectedFood
+                            Product selectedProduct = Menu[selectedFood];
+                            break;
+                        }
+                        catch (ArgumentOutOfRangeException)
+                        {
+                            DisplayCenter(' ',$"Argument out of range. Please enter a number 1-{Menu.Count}");
+                            DisplayCenter(' ', "Press any key to continue!");
+                            DisplayCenter();
+                            Console.ReadKey();
+                            Console.Clear();
+                            Console.WriteLine("\x1b[3J");
+                            continue;
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Input... Please enter a number to choose the desired option.");
+                        Console.WriteLine("Press Any Key To Continue");
+                        Console.ReadKey();
+                        Console.Clear();
+                        continue;
+                    }
+                }
+                while (repeatSecondActionPrompt == true);
+                Console.Clear();
+                Console.WriteLine("\x1b[3J");
+                SelectMenuItems(selectedFood);
+                string cartActionString = $"[1] Add To Cart ";
+                string returnActionString = $"[2] Return To Menu ";
+                string[] secondaryMenuActions =
+                {
                         cartActionString,
                         returnActionString
                         };
 
-                        DisplayMax('-');
-                        DisplayHalfCenter(' ', cartActionString);
-                        DisplayHalfCenter(' ', returnActionString, true);
-                        int secondActionIndex = -1;
+                DisplayMax('-');
+                DisplayHalfCenter(' ', cartActionString);
+                DisplayHalfCenter(' ', returnActionString, true);
+                int secondActionIndex = -1;
 
-                        DisplayMax('-');
-                        Console.Write(new string(' ', MenuHalfCenterLength));
-                        if (int.TryParse(Console.ReadLine(), out secondActionIndex))
-                        {
-                            secondActionIndex -= 1;
-                            try
-                            {
-                                Console.Clear();
-                                _ = secondaryMenuActions[secondActionIndex];
+                DisplayMax('-');
+                Console.Write(new string(' ', MenuHalfCenterLength));
+                if (int.TryParse(Console.ReadLine(), out secondActionIndex))
+                {
+                    secondActionIndex -= 1;
+                    try
+                    {
+                        Console.Clear();
+                        _ = secondaryMenuActions[secondActionIndex];
 
-                            }
-                            catch (ArgumentOutOfRangeException)
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        Console.WriteLine("Invalid argument please enter 1 or 2.");
+                        Console.Write("Press any key to continue: ");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    switch (secondActionIndex)
+                    {
+                        case 0:
+                            do
                             {
-                                Console.WriteLine("Invalid argument please enter 1 or 2.");
-                                Console.Write("Press any key to continue: ");
-                                Console.ReadKey();
-                                continue;
-                            }
-                            catch (IndexOutOfRangeException)
-                            {
-                                Console.WriteLine("Invalid index please enter 1 or 2.");
-                                Console.Write("Press any key to continue: ");
-                                Console.ReadKey();
-                                continue;
-                            }
-                            switch (secondActionIndex)
-                            {
-                                case 0:
-                                    do
-                                    {
-                                        int thirdActionIndex = -1;
-                                        string[] addToCartOptions = new string[]
-                                        {
+                                int thirdActionIndex = -1;
+                                string[] addToCartOptions = new string[]
+                                {
                                 " [1] Add One ",
                                 " [2] Add More ",
                                 " [3] Return ",
-                                        };
+                                };
+                                Console.Clear();
+                                SelectMenuItems(selectedFood);
+                                Console.WriteLine(new string('-', MenuMaxLength));
+                                DisplayHalfCenter(' ', addToCartOptions[0]);
+                                DisplayHalfCenter(' ', addToCartOptions[1], true);
+                                DisplayCenter(' ', new string('-', MenuHalfCenterLength));
+                                DisplayCenter(' ', addToCartOptions[2]);
+                                Console.WriteLine(new string('-', MenuMaxLength));
+                                Console.Write(new string(' ', MenuHalfCenterLength));
+                                if (int.TryParse(Console.ReadLine(), out thirdActionIndex))
+                                {
+                                    thirdActionIndex -= 1;
+                                    try
+                                    {
+                                        _ = addToCartOptions[thirdActionIndex];
+                                    }
+                                    catch (ArgumentOutOfRangeException)
+                                    {
+                                        DisplayCenter(' ', $"Invalid Input! Please enter an input between 1 and {addToCartOptions.Length}");
+                                        DisplayCenter(' ', "Press any key to continue");
+                                        DisplayCenter();
+                                        Console.ReadKey();
                                         Console.Clear();
-                                        SelectMenuItems(selectedFood);
-                                        Console.WriteLine(new string('-', MenuMaxLength));
-                                        DisplayHalfCenter(' ', addToCartOptions[0]);
-                                        DisplayHalfCenter(' ', addToCartOptions[1], true);
-                                        DisplayCenter(' ', new string('-', MenuHalfCenterLength));
-                                        DisplayCenter(' ', addToCartOptions[2]);
-                                        Console.WriteLine(new string('-', MenuMaxLength));
-                                        Console.Write(new string(' ', MenuHalfCenterLength));
-                                        if (int.TryParse(Console.ReadLine(), out thirdActionIndex))
-                                        {
-                                            thirdActionIndex -= 1;
-                                            try
+                                        continue;
+                                    }
+                                    switch (thirdActionIndex)
+                                    {
+                                        case 0:
+                                            AddToCart(Menu[selectedFood]);
+                                            string confirmationText = $"{Menu[selectedFood].Name} has been added to your cart! Your cart now has {Cart.Count} items!";
+                                            DisplayCenter(' ', confirmationText);
+                                            DisplayCenter(' ', exitText);
+                                            Console.Write(new string(' ', MenuHalfCenterLength));
+                                            Console.ReadKey();
+                                            return;
+                                        case 1:
+                                            //asks how many a user wants to add then addds that many to the cart | will display item and then will display quantity like xNumber to the right of the item in the receipt
+                                            int fourthActionIndex = -1;
+                                            string question = "How Many Would you like to add to your cart? (MAX:10)";
+                                            DisplayCenter(' ', question);
+                                            Console.Write(new string(' ', MenuHalfCenterLength));
+                                            if (int.TryParse(Console.ReadLine(), out fourthActionIndex))
                                             {
-                                                _ = addToCartOptions[thirdActionIndex];
-                                            }
-                                            catch (ArgumentOutOfRangeException)
-                                            {
-                                                Console.WriteLine($"Invalid Input! Please enter an input between 1 and {addToCartOptions.Length}");
-                                                Console.WriteLine("Press any key to continue");
-                                                Console.ReadKey();
-                                                Console.Clear();
-                                                continue;
-                                            }
-                                            catch (IndexOutOfRangeException)
-                                            {
-                                                Console.WriteLine($"Invalid Input! Please enter an input between 1 and {addToCartOptions.Length}");
-                                                Console.WriteLine("Press any key to continue");
-                                                Console.ReadKey();
-                                                Console.Clear();
-                                                continue;
-                                            }
-                                            switch (thirdActionIndex)
-                                            {
-                                                case 0:
-                                                    AddToCart(Menu[selectedFood]);
-                                                    string confirmationText = $"{Menu[selectedFood].Name} has been added to your cart! Your cart now has {Cart.Count} items!";
+                                                if (fourthActionIndex >= 1 && fourthActionIndex <= 10)
+                                                {
+                                                    AddToCart(fourthActionIndex, Menu[selectedFood]);
+                                                    confirmationText = $"{Menu[selectedFood].Name} has been added to your cart {fourthActionIndex} times! Your cart now has {Cart.Count} items!";
                                                     DisplayCenter(' ', confirmationText);
                                                     DisplayCenter(' ', exitText);
                                                     Console.Write(new string(' ', MenuHalfCenterLength));
                                                     Console.ReadKey();
                                                     return;
-                                                case 1:
-                                                    //asks how many a user wants to add then addds that many to the cart | will display item and then will display quantity like xNumber to the right of the item in the receipt
-                                                    int fourthActionIndex = -1;
-                                                    string question = "How Many Would you like to add to your cart? (MAX:10)";
-                                                    DisplayCenter(' ', question);
-                                                    Console.Write(new string(' ', MenuHalfCenterLength));
-                                                    if (int.TryParse(Console.ReadLine(), out fourthActionIndex))
-                                                    {
-                                                        if (fourthActionIndex >= 1 && fourthActionIndex <= 10)
-                                                        {
-                                                            AddToCart(fourthActionIndex, Menu[selectedFood]);
-                                                            confirmationText = $"{Menu[selectedFood].Name} has been added to your cart {fourthActionIndex} times! Your cart now has {Cart.Count} items!";
-                                                            DisplayCenter(' ', confirmationText);
-                                                            DisplayCenter(' ', exitText);
-                                                            Console.Write(new string(' ', MenuHalfCenterLength));
-                                                            Console.ReadKey();
-                                                            return;
-                                                        }
-                                                        else if (fourthActionIndex > 10)
-                                                        {
-                                                            Console.WriteLine("Sorry you can only add 10 items at a time! Thank You!");
-                                                            Console.WriteLine("Press any key to continue!");
-                                                            Console.ReadKey();
-                                                            Console.Clear();
-                                                            continue;
-                                                        }
-                                                        else
-                                                        {
-                                                            Console.WriteLine("Operation failed! Can't add 0 or less objects to the cart!");
-                                                            Console.WriteLine("Press any key to continue!");
-                                                            Console.ReadKey();
-                                                            Console.Clear();
-                                                            continue;
-                                                        }
-                                                    }
-                                                    break;
-                                                case 2:
-                                                    OrderFood();
-                                                    break;
+                                                }
+                                                else if (fourthActionIndex > 10)
+                                                {
+                                                    
+                                                    DisplayCenter(' ', $"Sorry you can only add 10 items at a time! Thank You though :) {exitText}");
+                                                    Console.ReadKey();
+                                                    Console.Clear();
+                                                    continue;
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("Operation failed! Can't add 0 or less objects to the cart!");
+                                                    Console.WriteLine("Press any key to continue!");
+                                                    Console.ReadKey();
+                                                    Console.Clear();
+                                                    continue;
+                                                }
                                             }
                                             break;
-                                        }
-                                    } while (true);
+                                        case 2:
+                                            repeatSecondActionPrompt = true;
+                                            break;
+                                    }
                                     break;
-                                case 1:
-                                    //recursive usage of method perhaps?
-                                    OrderFood();
-
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid Input... Please enter a number to choose the desired option.");
-                            Console.WriteLine("Press Any Key To Continue");
-                            Console.ReadKey();
-                            Console.Clear();
+                                }
+                            } while (repeatThirdActionPrompt == true);
+                            break;
+                        case 1:
                             continue;
-                        }
-                    } while (true);
+
+                    }
                 }
                 else
                 {
@@ -442,7 +564,8 @@ namespace PointOfSaleTerminal.StoreLogic
                     Console.Clear();
                     continue;
                 }
-            } while (true);
+
+            } while (repeatSecondActionPrompt == true);
         }
 
         //Throws each menu item into a list based on its category and will separate and display them based on that information
@@ -538,7 +661,7 @@ namespace PointOfSaleTerminal.StoreLogic
                 }
             }
             //look how to express repeated chars using Console witchery
-            DisplayMax('-');
+            DisplayMax('=');
             //test value with magic value 
             //TODO Change length values to include const values and math that would take into account of variable lengths for each thing. e.g: change "4C Menu" to store name.
             //Add logic to take into account the store name being odd vs even. As well as all of the other name dependent cw calls.
@@ -816,6 +939,11 @@ namespace PointOfSaleTerminal.StoreLogic
             int offset = contentString.Length / 2;
             Console.WriteLine(new string(characterTally, MenuHalfCenterLength - offset) + $"{contentString}" + new string(characterTally, MenuHalfCenterLength - offset));
         }
+        static public void DisplayCenter()
+        {
+            Console.Write(new string(' ', MenuHalfCenterLength));
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -139,13 +139,14 @@ Console.ReadKey();
 void ConsoleMenuNavigation()
 {
     string prompt = "";
-    StoreFront.DisplayMax('-');
     string storeWelcome = "Welcome to Chelsea's Comically Collossal Chicken";
-    StoreFront.DisplayCenter(' ', storeWelcome);
-    StoreFront.DisplayMax('-');
-
+   
     while (true)
     {
+        StoreFront.DisplayMax('=');
+        StoreFront.DisplayCenter(' ', storeWelcome);
+        StoreFront.DisplayMax('=');
+
         string consoleMenuPrompt = "Enter the number for the console menu option: ";
         StoreFront.DisplayCenter(' ', consoleMenuPrompt);
         for (int i = 0; i < consoleMenuOptions.Length; i++)
@@ -153,12 +154,12 @@ void ConsoleMenuNavigation()
             string menuOption = $"{i + 1}: {consoleMenuOptions[i]} ";
             StoreFront.DisplayCenter(' ', menuOption);
         }
-        StoreFront.DisplayMax('-');
+        StoreFront.DisplayMax('=');
         Console.Write(new string(' ', StoreFront.MenuHalfCenterLength));
         if (int.TryParse(Console.ReadLine(), out int selectedMenuOption))
         {
             Console.Clear();
-            try { Console.WriteLine($"You have selected {consoleMenuOptions[selectedMenuOption - 1]}"); }
+            try {StoreFront.DisplayCenter(' ', $"You have selected {consoleMenuOptions[selectedMenuOption - 1]}"); }
             catch (IndexOutOfRangeException)
             {
                 if (selectedMenuOption == adminCode)
@@ -167,11 +168,15 @@ void ConsoleMenuNavigation()
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect input! Please select a corresponding option on the menu");
+                    StoreFront.DisplayCenter(' ', "Incorrect input! Please select a corresponding option on the menu. Press any key to continue:");
+                    StoreFront.DisplayCenter();
+                    Console.ReadKey();
+                    Console.Clear();
                     continue;
                 }
             }
-            Console.WriteLine("Press any key to continue:");
+            StoreFront.DisplayCenter(' ', "Press any key to continue:");
+            StoreFront.DisplayCenter();
             Console.ReadKey();
             Console.Clear();
             switch (selectedMenuOption)
@@ -183,8 +188,8 @@ void ConsoleMenuNavigation()
                     chelseasChickenStore.DisplayCart();
                     StoreFront.DisplayMax('-');
                     StoreFront.DisplayCenter(' ', "Press any key to continue");
-                    StoreFront.DisplayHalfCenter(' ', "", false);
-                    Console.ReadLine();
+                    StoreFront.DisplayCenter();
+                    Console.ReadKey();
                     break;
                 case 3: //Cart clearing
                     prompt = "Are you sure? This will empty your cart!";
@@ -202,10 +207,24 @@ void ConsoleMenuNavigation()
                     }
                 case 4: //Checking out
                     chelseasChickenStore.CheckOut();
-                    break;
-                case 5:
                     isContinuing = false;
                     break;
+                case 5:
+                    prompt = "Are you sure? This will empty your cart!";
+                    StoreFront.DisplayMax('-');
+                    StoreFront.DisplayCenter(' ', prompt);
+                    userAnswer = AnswerYOrN();
+                    if (userAnswer == "y")
+                    {
+                        StoreFront.DisplayCenter(' ', "Press any key to exit;");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 case adminCode:
                     AdminMenu();
                     break;
