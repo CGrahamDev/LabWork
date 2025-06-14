@@ -86,7 +86,7 @@ namespace PointOfSaleTerminal.StoreLogic
             }
 
         }
-
+        /*
         public void AddToCart(MealDeal combo)
         {
             //NOT IMPLEMENTED
@@ -97,6 +97,7 @@ namespace PointOfSaleTerminal.StoreLogic
             Console.WriteLine($"Added {combo.MealName}");
             throw new NotImplementedException();
         }
+        */
         public void ClearCart()
         {
             Cart.Clear();
@@ -153,6 +154,16 @@ namespace PointOfSaleTerminal.StoreLogic
                 throw new NullReferenceException("Cart is empty.");
             }
         }
+        public int CountCart()
+        {
+            int count = 0;
+            foreach(KeyValuePair<Product, int> item in Cart)
+            {
+                count += item.Value;
+            }
+            return count;
+        }
+
         // will be used in other functions to display a specific item that might be being affeceted by any customer actions
         //maybe change this to take an int parameter or maybe overload that
         public void DisplayFromCart(Product product)
@@ -184,7 +195,7 @@ namespace PointOfSaleTerminal.StoreLogic
                             DisplayCenter(' ', $"{itemPrice} | {itemNameAndIndex}");
                             Console.WriteLine(new string(' ', MenuQuarterCenterLength) + new string('-', MenuHalfCenterLength) + new string(' ', MenuQuarterCenterLength));
                         }
-                       
+
                     }
                     else
                     {
@@ -203,6 +214,7 @@ namespace PointOfSaleTerminal.StoreLogic
         }
         public void CheckOut()
         {
+            CustomerAccount payment;
             string[] checkOutOptions = {
                 "[1] Cash ",
                 "[2] Credit ",
@@ -216,9 +228,7 @@ namespace PointOfSaleTerminal.StoreLogic
                 //DISPLAYS THE CART THEN ASKS THE USER FOR ACTIONS (CHECKOUT/REMOVE FROM CART/)
                 try
                 {
-                    DisplayMax('=');
                     DisplayCart();
-                    DisplayMax('=');
                 }
                 catch (NullReferenceException)
                 {
@@ -266,11 +276,15 @@ namespace PointOfSaleTerminal.StoreLogic
                                 DisplayCenter();
                                 if (decimal.TryParse(Console.ReadLine(), out decimal tenderedAmount))
                                 {
-                                    CustomerAccount cashCustomer = new CustomerAccount(tenderedAmount, CartPrice, StoreAccount.Balance);
+                                    payment = new CustomerAccount(tenderedAmount, CartPrice, StoreAccount.Balance);
                                     Console.Clear();
                                     Console.WriteLine("\x1b[3J");
                                     DisplayReceipt();
-                                    DisplayCenter(' ', $"Payemnt successful. Your Balance is {cashCustomer.Balance:c} Press any key to continue");
+                                    DisplayCenter(' ', $"Cash Payment");    
+                                    DisplayHalfCenter('-', $"Tendered Amount: {payment.Cash.TenderedAmount:c}");
+                                    DisplayHalfCenter('-', $"Change: {payment.Cash.Balance:c}", true);
+                                    DisplayMax(' ');
+                                    DisplayCenter(' ', $"Payemnt successful. Your Balance is {payment.Balance:c} Press any key to continue");
                                     DisplayCenter();
                                     Console.ReadKey();
                                 }
@@ -285,11 +299,16 @@ namespace PointOfSaleTerminal.StoreLogic
                                 }
                                 break;
                             case 2:
+                                DisplayMax('-');
+                                DisplayCenter(' ', $"Your total is {CartPrice:c}. Enter your name: ");
+                                DisplayCenter();
+                                string customerName = Console.ReadLine();
                                 do
                                 {
+                                    //CREDIT
                                     decimal prePaymentBalance = StoreAccount.Balance;
-                                    DisplayMax('-');
-                                    DisplayCenter(' ', $"Your amount owed is {CartPrice:c}. Enter your card number: ");
+                                    
+                                    DisplayCenter(' ', "Enter your card number:");
                                     DisplayCenter();
                                     string cardNumber = Console.ReadLine();
                                     DisplayCenter(' ', $"Enter your expiration date: ");
@@ -300,20 +319,25 @@ namespace PointOfSaleTerminal.StoreLogic
                                     string cvv = Console.ReadLine();
                                     try
                                     {
-                                        CustomerAccount account = new CustomerAccount(cardNumber, expiration, cvv, new Random().Next(25, 300), CartPrice, StoreAccount.Balance);
+                                        payment = new CustomerAccount(cardNumber, expiration, cvv, new Random().Next(25, 300), CartPrice, StoreAccount.Balance);
+                                        payment.Name = customerName;
                                         Console.Clear();
                                         Console.WriteLine("\x1b[3J");
                                         DisplayReceipt();
+                                        DisplayCenter(' ', "Payment type: Credit");
+                                        DisplayHalfCenter('-', $"{payment.Name}");
+                                        DisplayHalfCenter('-', $"Card Number: {payment.Credit.AnonymousCardNumber}", true);
                                         DisplayCenter(' ', "Payemnt successful. Press any key to continue");
-                                        DisplayCenter(' ', $"Your balance is {account.Balance:c}");
+                                        DisplayCenter(' ', $"Your balance is {payment.Balance:c}");
+                                        DisplayMax('-');
                                         DisplayCenter();
                                         Console.ReadKey();
                                         break;
                                     }
-                                    catch (Exception)
+                                    catch (Exception ex)
                                     {
                                         DisplayMax('-');
-                                        DisplayCenter(' ', "Payment failed. Press any key to continue:");
+                                        DisplayCenter(' ', $"Payment failed. {ex.Message} Press any key to continue:");
                                         Console.ReadKey();
                                         Console.Clear();
                                         Console.WriteLine("\x1b[3J");
@@ -322,18 +346,22 @@ namespace PointOfSaleTerminal.StoreLogic
                                 } while (true);
                                 break;
                             case 3:
+                                //CHECK PAYMENT
                                 DisplayMax('-');
                                 DisplayCenter(' ', "Enter your name:");
                                 string name = Console.ReadLine().Trim();
                                 DisplayMax('-');
-                                DisplayCenter(' ', "Enter your check number:");
+                                DisplayCenter(' ', "Enter your check number (9 chars):");
                                 string checkNumber = Console.ReadLine().Trim();
                                 try
                                 {
-                                    CustomerAccount checkPayment = new CustomerAccount(name, checkNumber, CartPrice, StoreAccount.Balance);
+                                    payment = new CustomerAccount(name, checkNumber, CartPrice, StoreAccount.Balance);
                                     Console.Clear();
                                     Console.WriteLine("\x1b[3J");
                                     DisplayReceipt();
+                                    DisplayCenter(' ', "Payment type: Check ");
+                                    DisplayHalfCenter('-', $"Check Number: {payment.Name}", true);
+                                    DisplayHalfCenter('-', $"Check Number: {payment.Check.CheckNumber}", true);
                                     DisplayCenter(' ', "Payemnt successful. Press any key to continue");
 
                                     DisplayCenter();
@@ -362,11 +390,11 @@ namespace PointOfSaleTerminal.StoreLogic
                     Console.Clear();
                     Console.WriteLine("\x1b[3J");
                 }
-                
+
                 break;
             }
 
-            
+
         }
 
 
@@ -379,8 +407,8 @@ namespace PointOfSaleTerminal.StoreLogic
             int selectedFood = -1;
             bool repeatSecondActionPrompt = false;
             bool repeatThirdActionPrompt = false;
-            
- 
+            int cartCount;
+
             bool isValidNumber = false;
             string introText = "Enter a number to select the desired menu item";
             string exitText = "Press any key to continue:";
@@ -406,7 +434,7 @@ namespace PointOfSaleTerminal.StoreLogic
                         }
                         catch (ArgumentOutOfRangeException)
                         {
-                            DisplayCenter(' ',$"Argument out of range. Please enter a number 1-{Menu.Count}");
+                            DisplayCenter(' ', $"Argument out of range. Please enter a number 1-{Menu.Count}");
                             DisplayCenter(' ', "Press any key to continue!");
                             DisplayCenter();
                             Console.ReadKey();
@@ -511,7 +539,7 @@ namespace PointOfSaleTerminal.StoreLogic
                                                 Console.ReadKey();
                                                 continue;
                                             }
-                                            string confirmationText = $"{Menu[selectedFood].Name} has been added to your cart! Your cart now has {Cart.Count} items!";
+                                            string confirmationText = $"{Menu[selectedFood].Name} has been added to your cart! Your cart now has {CountCart()} items!";
                                             DisplayCenter(' ', confirmationText);
                                             DisplayCenter(' ', exitText);
                                             Console.Write(new string(' ', MenuHalfCenterLength));
@@ -538,7 +566,7 @@ namespace PointOfSaleTerminal.StoreLogic
                                                         Console.ReadKey();
                                                         continue;
                                                     }
-                                                    confirmationText = $"{Menu[selectedFood].Name} has been added to your cart {fourthActionIndex} times! Your cart now has {Cart.Count} items!";
+                                                    confirmationText = $"{Menu[selectedFood].Name} has been added to your cart {fourthActionIndex} times! Your cart now has {CountCart()} items!";
                                                     DisplayCenter(' ', confirmationText);
                                                     DisplayCenter(' ', exitText);
                                                     Console.Write(new string(' ', MenuHalfCenterLength));
@@ -547,7 +575,7 @@ namespace PointOfSaleTerminal.StoreLogic
                                                 }
                                                 else if (fourthActionIndex > 10)
                                                 {
-                                                    
+
                                                     DisplayCenter(' ', $"Sorry you can only add 10 items at a time! Thank You though :) {exitText}");
                                                     Console.ReadKey();
                                                     Console.Clear();

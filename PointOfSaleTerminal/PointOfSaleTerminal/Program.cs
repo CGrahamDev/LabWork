@@ -1,17 +1,17 @@
 ﻿/*
 Write a cash register or self-service terminal for some kind of retail location.  Obvious choices include a small store, a coffee shop, or a fast food restaurant.
--Your solution must include some kind of a product class with a name, category, description, and price for each item. 
--12 items minimum; stored in a list.
--Present a menu to the user and let them choose an item (by number or letter).
-    -Allow the user to choose a quantity for the item ordered.
-    -Give the user a line total (item price * quantity).
--Either through the menu or a separate question, allow them to re-display the menu and to complete the purchase.
--Give the subtotal, sales tax, and grand total.  (Remember rounding issues the Math library will be handy!)
--Ask for payment type—cash, credit, or check
--For cash, ask for amount tendered and provide change.
--For check, get the check number.
--For credit, get the credit card number, expiration, and CVV.
--At the end, display a receipt with all items ordered, subtotal, grand total, and appropriate payment info.
+!-Your solution must include some kind of a product class with a name, category, description, and price for each item. 
+!-12 items minimum; stored in a list.
+!-Present a menu to the user and let them choose an item (by number or letter).
+    !-Allow the user to choose a quantity for the item ordered.
+    !-Give the user a line total (item price * quantity).
+!-Either through the menu or a separate question, allow them to re-display the menu and to complete the purchase.
+!-Give the subtotal, sales tax, and grand total.  (Remember rounding issues the Math library will be handy!)
+!-Ask for payment type—cash, credit, or check
+!-For cash, ask for amount tendered and provide change.
+!-For check, get the check number.
+!-For credit, get the credit card number, expiration, and CVV.
+!-At the end, display a receipt with all items ordered, subtotal, grand total, and appropriate payment info.
 -Return to the original menu for a new order.  (Hint: you’ll want an array or List to keep track of what’s been ordered!)
 
 Optional enhancements:
@@ -34,8 +34,8 @@ using System.Runtime.CompilerServices;
 
 string fileName = "food-menu";
 
-List<Product> defaultMenu = new List<Product>()
-{
+List<Product> defaultMenu =
+[
     //ADD BASIC ITEMS THAT WILL ALWAYS BE IN THE MENU
 
     //Entrees
@@ -71,7 +71,7 @@ List<Product> defaultMenu = new List<Product>()
     new Product("Strawberry Cheesecake",4,$"Strawberry cheesecake prepared by hand in-house and served fresh every day {9.99m:c}/full cake(8 slices) ",1.49m),
     new Product("Vanilla Milkshake",4,"A milkshake made w/ real vanilla and Whole Milk",2.49m),
     new Product("Banana Milkshake",4,"A milkshake made w/ real vanilla, bananas and Whole Milk",2.49m),
-};
+];
 StoreFront chelseasChickenStore = new StoreFront("Chelsea's Comically Collosal Chicken");
 
 string[] consoleMenuOptions = new string[5]
@@ -116,7 +116,7 @@ do
     ConsoleMenuNavigation();
     Console.Clear();
     Console.WriteLine("\x1b[3J");
-} while(isContinuing);
+} while (isContinuing);
 /* test method
 Console.WriteLine($"{doubleChickenMeal.ToString()}");
 */
@@ -140,7 +140,7 @@ void ConsoleMenuNavigation()
 {
     string prompt = "";
     string storeWelcome = "Welcome to Chelsea's Comically Collossal Chicken";
-   
+
     while (true)
     {
         StoreFront.DisplayMax('=');
@@ -159,7 +159,7 @@ void ConsoleMenuNavigation()
         if (int.TryParse(Console.ReadLine(), out int selectedMenuOption))
         {
             Console.Clear();
-            try {StoreFront.DisplayCenter(' ', $"You have selected {consoleMenuOptions[selectedMenuOption - 1]}"); }
+            try { StoreFront.DisplayCenter(' ', $"You have selected {consoleMenuOptions[selectedMenuOption - 1]}"); }
             catch (IndexOutOfRangeException)
             {
                 if (selectedMenuOption == adminCode)
@@ -191,9 +191,9 @@ void ConsoleMenuNavigation()
                     }
                     catch (Exception ex)
                     {
-                        StoreFront.DisplayCenter(' ',$"{ex.Message}");
+                        StoreFront.DisplayCenter(' ', $"{ex.Message}");
                     }
-                        StoreFront.DisplayMax('-');
+                    StoreFront.DisplayMax('-');
                     StoreFront.DisplayCenter(' ', "Press any key to continue");
                     StoreFront.DisplayCenter();
                     Console.ReadKey();
@@ -217,7 +217,7 @@ void ConsoleMenuNavigation()
                     isContinuing = false;
                     break;
                 case 5:
-                    prompt = "Are you sure? This will empty your cart!";
+                    prompt = "Are you sure? This will empty your cart and data will be unsaved.";
                     StoreFront.DisplayMax('-');
                     StoreFront.DisplayCenter(' ', prompt);
                     userAnswer = AnswerYOrN();

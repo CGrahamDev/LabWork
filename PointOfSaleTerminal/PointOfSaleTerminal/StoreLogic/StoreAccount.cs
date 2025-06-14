@@ -30,7 +30,7 @@ namespace PointOfSaleTerminal.StoreLogic
         }
         public StoreAccount(string name, decimal initalBalance)
         {
-            Random random = new Random();   
+            Random random = new Random();
             Name = name;
             AccountNumber = random.Next(0_000_000_000, 2_147_483_647);
             RoutingNumber = random.Next(0_000_000_000, 2_147_483_647);
@@ -40,13 +40,13 @@ namespace PointOfSaleTerminal.StoreLogic
 
         public override void SendFunds(Account targetVariable, decimal transferAmount)
         {
-            if(transferAmount >= 0.01m && (Balance - transferAmount >= 0m))
+            if (transferAmount >= 0.01m && (Balance - transferAmount >= 0m))
             {
                 Balance -= transferAmount;
                 targetVariable.ReceiveFunds(transferAmount);
 
             }
-            else if(transferAmount <= 0)
+            else if (transferAmount <= 0)
             {
                 throw new Exception("Transfer amount cannot be equal or less than $0");
             }
@@ -60,7 +60,8 @@ namespace PointOfSaleTerminal.StoreLogic
             if (transferAmount >= 00.1m)
             {
                 Balance += transferAmount;
-            } else
+            }
+            else
             {
                 throw new Exception($"Amount can't be less than {0.01:c}");
             }

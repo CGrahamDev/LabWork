@@ -8,7 +8,7 @@ namespace PointOfSaleTerminal.PaymentProcessing
         public string? CheckNumber { get; set; }
         public decimal Cost { get; set; }
         public bool IsUsed { get; private set; } = false;
-        
+
         /// <summary>
         /// 9 digit number for check
         /// </summary>
@@ -20,9 +20,9 @@ namespace PointOfSaleTerminal.PaymentProcessing
                 Cost = cost;
                 Pay(paymentTarget);
             }
-            else 
+            else
             {
-                throw new ArgumentException("Check number must be 9 characters long and only numbers");    
+                throw new ArgumentException("Check number must be 9 characters long and only numbers");
             }
 
         }
@@ -50,8 +50,8 @@ namespace PointOfSaleTerminal.PaymentProcessing
         }
         public void Pay()
         {
-            throw new NotImplementedException();   
+            throw new NotImplementedException();
         }
-        
+
     }
 }

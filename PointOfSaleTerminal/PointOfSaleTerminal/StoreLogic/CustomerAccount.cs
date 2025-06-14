@@ -9,11 +9,11 @@ namespace PointOfSaleTerminal.StoreLogic
 {
     internal class CustomerAccount : Account
     {
-        public override string Name { get ; set; }
-        new public decimal Balance { get ; private set; }
+        public override string Name { get; set; }
+        new public decimal Balance { get; private set; }
         public override int RoutingNumber { get; set; }
         public override int AccountNumber { get; set; }
-        public CashPayment Cash {  get; set; }
+        public CashPayment Cash { get; set; }
         public CreditPayment Credit { get; set; }
         public CheckPayment Check { get; set; }
 
@@ -54,7 +54,7 @@ namespace PointOfSaleTerminal.StoreLogic
             Balance = Credit.Balance;
         }
         //CHECK
-        public CustomerAccount(string name,string checkNumber, decimal cost, decimal paymentTarget)
+        public CustomerAccount(string name, string checkNumber, decimal cost, decimal paymentTarget)
         {
             Random random = new Random();
             Name = name;
