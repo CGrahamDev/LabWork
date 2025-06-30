@@ -197,6 +197,7 @@ void ConsoleMenuNavigation()
                     }
                     else
                     {
+                        Console.Clear();
                         continue;
                     }
                 case 4: //Checking out
@@ -243,7 +244,6 @@ string AnswerYOrN()
 {
     while (true)
     {
-        int i = 0;
         StoreFront.DisplayMax('-');
         string prompt = "Answer \"y\" or \"n\"";
         StoreFront.DisplayCenter(' ', prompt);
@@ -258,10 +258,12 @@ string AnswerYOrN()
                 return answer;
                 break;
             default:
+                Console.Clear();
                 Console.WriteLine("Invalid input: please enter \"y\" or \"n\"");
-                i++;
+                
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
+                Console.Clear();
                 continue;
         }
     }
