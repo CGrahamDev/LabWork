@@ -87,9 +87,9 @@ try
 }
 catch (FileNotFoundException)
 {
-    //StreamWriter writer = new StreamWriter($"{fileName}.txt", false);
+    StreamWriter writer = new StreamWriter($"{fileName}.txt", false);
     //in the case of a file not found exception use a default list of items that'd appear on the menu
-    //writer.Close();
+    writer.Close();
     chelseasChickenStore.Menu.AddRange(defaultMenu);
     chelseasChickenStore.UpdateMenuFile(fileName);
     
